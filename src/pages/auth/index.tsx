@@ -52,7 +52,7 @@ const LoginPage = () => {
 			</div>
 			<div>
 				<p className="block text-sm mb-2 white-text">
-					<Link href="/auth/sign-in"> Don't have a account?</Link>
+					<Link href="/auth/sign-up"> Dont have a account?</Link>
 				</p>
 			</div>
 		</>
