@@ -20,7 +20,7 @@ const SignUpPage = () => {
 		!checkError && setCheckError(true);
 		if (
 			email.includes('@') &&
-			password.trim().length < 8 &&
+			password.trim().length >= 8 &&
 			password === confirmPassword
 		) {
 			try {
@@ -33,6 +33,7 @@ const SignUpPage = () => {
 				setErrorMessage('An error occurred. Please try again.');
 			}
 		}
+		console.log('ruraj');
 	};
 
 	return (
