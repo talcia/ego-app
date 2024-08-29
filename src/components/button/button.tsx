@@ -10,7 +10,7 @@ const Button: React.FC<ButtonProps> = ({
 	...props
 }) => (
 	<button
-		className={`bg-btn font-bold py-2 px-4 my-2  rounded min-w-40 w-full ${styles[variant]}`}
+		className={`bg-btn font-bold py-2 px-4 my-2  rounded min-w-40 w-full disabled:bg-gray-400 disabled:cursor-not-allowed ${styles[variant]}`}
 		{...props}
 	>
 		{children}
