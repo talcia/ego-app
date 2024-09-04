@@ -5,9 +5,10 @@ import { NextApiRequest, NextApiResponse } from 'next';
 // api/room
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 	if (req.method === 'POST') {
-		const { roomCode, user } = req.body as unknown as {
+		const { roomCode, user, numberOfRounds } = req.body as unknown as {
 			roomCode: string;
 			user: any;
+			numberOfRounds: number;
 		};
 		const roomRef = doc(db, 'rooms', roomCode);
 		const room = await getDoc(roomRef);
@@ -23,6 +24,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 					isPrivate: false,
 					owner: user.id,
 					status: 'pending',
+					numberOfRounds,
 				});
 				const playersCollection = collection(roomRef, 'players');
 				const userRef = doc(playersCollection, user.id);

@@ -1,17 +1,22 @@
 import Logo from '@/components/logo/logo';
-import QuestionPage from '@/components/question-page/question-page';
+import QuestionPage, {
+	QuestionPageProps,
+} from '@/components/question-page/question-page';
 import { db } from '@/utils/db/firebase';
-import { doc, onSnapshot } from 'firebase/firestore';
+import { doc, getDoc, onSnapshot } from 'firebase/firestore';
+import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
-const RoundPage = () => {
+const RoundPage: React.FC<QuestionPageProps> = ({
+	question,
+	answers,
+	questionAboutPlayer,
+	playersAnswers,
+}) => {
 	const router = useRouter();
 	const [isRoundNumberShow, setIsRoundNumberShow] = useState(true);
-	const {
-		query: { roundNumber, roomCode },
-	} = router;
-	const [roundData, setRoundData] = useState<any>();
+	const { roundNumber, roomCode } = router.query;
 
 	useEffect(() => {
 		const timer = setTimeout(() => {
@@ -22,36 +27,27 @@ const RoundPage = () => {
 	}, []);
 
 	useEffect(() => {
-		if (!roomCode || Array.isArray(roomCode)) {
-			return;
-		}
-
 		const roundCollection = doc(
 			db,
 			'rooms',
-			roomCode,
+			roomCode as string,
 			'rounds',
 			roundNumber as string
 		);
 
 		const unsubscribe = onSnapshot(roundCollection, (docSnap) => {
-			const roundData = docSnap.data();
-			setRoundData(roundData);
+			const isEveryPlayerReady = docSnap
+				.data()
+				?.playersAnswers.every((player: any) => player.isReady);
+			if (isEveryPlayerReady) {
+				router.push(
+					`/room/${roomCode}/round/${roundNumber}/round-summarize`
+				);
+			}
 		});
 
 		return () => unsubscribe();
-	}, [roomCode, roundNumber]);
-
-	useEffect(() => {
-		const isEveryPlayerReady = roundData?.playersAnswers.every(
-			(player: any) => player.isReady
-		);
-		if (isEveryPlayerReady) {
-			router.push(
-				`/room/${roomCode}/round/${roundNumber}/round-summarize`
-			);
-		}
-	}, [roomCode, roundData, roundNumber, router]);
+	}, [roomCode, roundNumber, router]);
 
 	return (
 		<>
@@ -65,10 +61,10 @@ const RoundPage = () => {
 			)}
 			{!isRoundNumberShow && (
 				<QuestionPage
-					question={roundData.question}
-					answers={roundData.answers}
-					questionAboutPlayer={roundData.questionAboutPlayer}
-					players={roundData.playersAnswers}
+					question={question}
+					answers={answers}
+					questionAboutPlayer={questionAboutPlayer}
+					playersAnswers={playersAnswers}
 				/>
 			)}
 		</>
@@ -76,3 +72,28 @@ const RoundPage = () => {
 };
 
 export default RoundPage;
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+	const { roundNumber, roomCode } = context.params!;
+
+	const roundCollection = doc(
+		db,
+		'rooms',
+		roomCode as string,
+		'rounds',
+		roundNumber as string
+	);
+
+	const roundDoc = await getDoc(roundCollection);
+	const { question, answers, questionAboutPlayer, playersAnswers } =
+		roundDoc.data() || {};
+
+	return {
+		props: {
+			question,
+			answers,
+			questionAboutPlayer,
+			playersAnswers,
+		},
+	};
+};

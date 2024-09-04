@@ -10,7 +10,7 @@ import { pushPlayerAnswer } from '@/utils/api/rounds';
 import router from 'next/router';
 import { getPlayerData } from '@/utils/api/players';
 
-interface QuestionPageProps {
+export interface QuestionPageProps {
 	question: string;
 	answers: Answer[];
 	questionAboutPlayer: {
@@ -18,14 +18,14 @@ interface QuestionPageProps {
 		name: string;
 		avatar: string;
 	};
-	players: { id: string; avatar: string; isReady: boolean }[];
+	playersAnswers: { id: string; avatar: string; isReady: boolean }[];
 }
 
 const QuestionPage: React.FC<QuestionPageProps> = ({
 	question,
 	answers,
 	questionAboutPlayer,
-	players,
+	playersAnswers,
 }) => {
 	const [selectedCoins, setSelectedCoins] = useState(0);
 	const [selectedAnswer, setSelectedAnswer] = useState('');
@@ -68,7 +68,7 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
 	return (
 		<div>
 			<div>
-				<PlayersAvatarList players={players} />
+				<PlayersAvatarList players={playersAnswers} />
 			</div>
 			<div>
 				<p className="white-text mb-4 text-center">Question about</p>

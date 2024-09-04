@@ -1,4 +1,5 @@
 import { getRoomByCode } from '@/utils/api/rooms';
+import { getPlayersArray, getShuffledQuestionArray } from '@/utils/api/rounds';
 import {
 	collection,
 	doc,
@@ -17,67 +18,47 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 			return;
 		}
 
+		const { roomRef } = response;
+
 		try {
 			await updateDoc(response.roomRef, {
 				status: 'started',
 			});
-			const playersColelction = collection(response.roomRef, 'players');
-			const playersSnapshot = await getDocs(playersColelction);
-			const players = playersSnapshot.docs.map((doc) => ({
-				id: doc.id,
-				name: doc.data().name,
-				avatar: doc.data().avatar,
-			}));
-			const roundsCollection = collection(response.roomRef, 'rounds');
-			const roundData = {
-				roundNumber: 1,
-				question: 'which situation scares you the most',
-				answers: [
-					{ id: '1', label: 'bat tangled in hair' },
-					{ id: '2', label: 'mouse under the covers' },
-					{ id: '3', label: 'long black hair in the soup' },
-				],
-				playersAnswers: players.map((player: any) => ({
-					id: player.id,
-					answer: '',
-					coin: 0,
-					isReady: false,
-					isReadyForNextRound: false,
-				})),
-				questionAboutPlayer: {
-					name: players[0].name,
-					id: players[0].id,
-					avatar: players[0].avatar,
-				},
-				correctAnswer: '',
-			};
-			const roundRef = doc(roundsCollection, '1');
-			await setDoc(roundRef, roundData);
 
-			const roundData2 = {
-				roundNumber: 2,
-				question: 'which situation scares you the most ',
-				answers: [
-					{ id: '1', label: 'bat tangled in hair 2 ' },
-					{ id: '2', label: 'mouse under the covers 2 ' },
-					{ id: '3', label: 'long black hair in the soup2 2' },
-				],
-				playersAnswers: players.map((player: any) => ({
-					id: player.id,
-					answer: '',
-					coin: 0,
-					isReady: false,
-					isReadyForNextRound: false,
-				})),
-				questionAboutPlayer: {
-					name: players[1].name,
-					id: players[1].id,
-					avatar: players[1].avatar,
-				},
-				correctAnswer: '',
-			};
-			const roundRef2 = doc(roundsCollection, '2');
-			await setDoc(roundRef2, roundData2);
+			const shuffledQuestionsArray = await getShuffledQuestionArray();
+			const players = await getPlayersArray(roomRef);
+			const numberOfRounds = response.room.data().numberOfRounds;
+
+			const roundsCollection = collection(roomRef, 'rounds');
+
+			let playerIndex = 0;
+			for (let i = 0; i <= numberOfRounds; i++) {
+				const { question, answers } = shuffledQuestionsArray[i];
+				if (playerIndex === players.length) {
+					playerIndex = 0;
+				}
+
+				const roundData = {
+					question: question,
+					answers: answers,
+					playersAnswers: players.map((player: any) => ({
+						id: player.id,
+						answer: '',
+						coin: 0,
+						isReady: false,
+						isReadyForNextRound: false,
+					})),
+					questionAboutPlayer: {
+						name: players[playerIndex].name,
+						id: players[playerIndex].id,
+						avatar: players[playerIndex].avatar,
+					},
+					correctAnswer: '',
+				};
+				const roundRef = doc(roundsCollection, String(i + 1));
+				await setDoc(roundRef, roundData);
+				playerIndex += 1;
+			}
 
 			res.status(201).json({ message: 'Room started' });
 		} catch (e) {

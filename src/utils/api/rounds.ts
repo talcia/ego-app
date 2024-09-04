@@ -1,4 +1,10 @@
-import { doc, getDoc } from 'firebase/firestore';
+import {
+	collection,
+	doc,
+	DocumentReference,
+	getDoc,
+	getDocs,
+} from 'firebase/firestore';
 import { db } from '../db/firebase';
 
 interface PlayerData {
@@ -69,4 +75,27 @@ export const pushPlayerAnswer = async ({
 			'Content-Type': 'application/json',
 		},
 	});
+};
+
+export const getShuffledQuestionArray = async () => {
+	const questionRef = collection(db, 'questions');
+	const questionsData = await getDocs(questionRef);
+	const questions = questionsData.docs.map((doc) => ({
+		question: doc.data().question,
+		answers: doc.data().answers,
+	}));
+
+	return questions.sort(() => 0.5 - Math.random());
+};
+
+export const getPlayersArray = async (roomRef: DocumentReference) => {
+	const playersColelction = collection(roomRef, 'players');
+	const playersSnapshot = await getDocs(playersColelction);
+	const players = playersSnapshot.docs.map((doc) => ({
+		id: doc.id,
+		name: doc.data().name,
+		avatar: doc.data().avatar,
+	}));
+
+	return players;
 };

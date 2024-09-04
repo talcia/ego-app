@@ -2,18 +2,29 @@ import Button from '@/components/button/button';
 import Error from '@/components/error/error';
 import Input from '@/components/input/input';
 import AdminContext from '@/store/admin-context';
-import { auth } from '@/utils/db/firebase';
+import { auth, db } from '@/utils/db/firebase';
+import { collection, getDocs } from 'firebase/firestore';
 import { useRouter } from 'next/router';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 
 const CreateRoom: React.FC = () => {
 	const router = useRouter();
 	const [roomCode, setRoomCode] = useState('');
 	const [errorMessage, setErrorMessage] = useState('');
-	const [maxNumberOfPlayers, setMaxNumberOfPlayers] = useState(4);
+	const [numberOfQuestions, setNumberOfQuestion] = useState(3);
+	const [maxRounds, setMaxRounds] = useState(0);
 	const [user] = useAuthState(auth);
 	const { setIsAdmin } = useContext(AdminContext);
+
+	useEffect(() => {
+		const getNumberOfQuestions = async () => {
+			const questionRef = collection(db, 'questions');
+			const questions = await getDocs(questionRef);
+			setMaxRounds(questions.docs.length);
+		};
+		getNumberOfQuestions();
+	}, []);
 
 	const handleCreateRoom = async () => {
 		const response = await fetch('/api/room', {
@@ -29,6 +40,7 @@ const CreateRoom: React.FC = () => {
 					isReady: true,
 					status: 'accepted',
 				},
+				numberOfRounds: numberOfQuestions,
 			}),
 			headers: {
 				'Content-Type': 'application/json',
@@ -55,11 +67,12 @@ const CreateRoom: React.FC = () => {
 				onChange={({ target: { value } }) => setRoomCode(value)}
 			/>
 			<Input
-				label="Max number of players"
+				label="How many rounds?"
 				type="number"
-				value={maxNumberOfPlayers}
+				value={numberOfQuestions}
+				max={maxRounds}
 				onChange={({ target: { value } }) =>
-					setMaxNumberOfPlayers(+value)
+					setNumberOfQuestion(+value)
 				}
 			/>
 
