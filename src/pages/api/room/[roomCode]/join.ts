@@ -1,6 +1,5 @@
 import { getRoomByCode } from '@/utils/api/rooms';
-import { db } from '@/utils/db/firebase';
-import { arrayUnion, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+import { collection, doc, setDoc } from 'firebase/firestore';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 // api/room
@@ -17,12 +16,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 		}
 
 		try {
-			await updateDoc(resposne.roomRef, {
-				players: arrayUnion({
-					...user,
-					admin: false,
-					status: 'pending',
-				}),
+			const playersCollection = collection(resposne.roomRef, 'players');
+			const playerRef = doc(playersCollection, user.id);
+			await setDoc(playerRef, {
+				...user,
+				admin: false,
+				status: 'pending',
 			});
 			res.status(201).json({ message: 'User added' });
 		} catch (e) {

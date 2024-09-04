@@ -1,27 +1,33 @@
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../db/firebase';
 
-export const updatePlayersArray = async (
+export const updatePlayer = async (
 	roomCode: string,
 	playerId: string,
 	key: string,
 	value: any
 ) => {
-	const roomDocRef = doc(db, 'rooms', roomCode);
-	const roomDoc = await getDoc(roomDocRef);
+	const playerCollection = doc(db, 'rooms', roomCode, 'players', playerId);
+	const playerDoc = await getDoc(playerCollection);
 
-	if (!roomDoc.exists()) {
-		return 'Room doesnt exist';
+	if (!playerDoc.exists()) {
+		return;
 	}
 
-	const roomData = roomDoc.data();
+	const playerData = playerDoc.data();
 
-	const updatedPlayers = roomData?.players.map((player: any) => {
-		if (player.id === playerId) {
-			return { ...player, [key]: value };
-		}
-		return player;
-	});
+	const updatedPlayer = { ...playerData, [key]: value };
 
-	return updatedPlayers;
+	return { updatedPlayer, playerCollection };
+};
+
+export const getPlayerData = async (roomCode: string, playerId: string) => {
+	const playerCollection = doc(db, 'rooms', roomCode, 'players', playerId);
+	const playerDoc = await getDoc(playerCollection);
+
+	if (!playerDoc.exists()) {
+		return;
+	}
+
+	return playerDoc.data();
 };

@@ -1,5 +1,5 @@
 import { db } from '@/utils/db/firebase';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { collection, doc, getDoc, setDoc } from 'firebase/firestore';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 // api/room
@@ -21,12 +21,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 				await setDoc(doc(db, 'rooms', roomCode), {
 					_id: roomCode,
 					isPrivate: false,
-					players: [user],
 					owner: user.id,
+					status: 'pending',
 				});
+				const playersCollection = collection(roomRef, 'players');
+				const userRef = doc(playersCollection, user.id);
+				await setDoc(userRef, user);
 				res.status(201).json({ message: 'Room created' });
 			} catch (e) {
-				console.log(e);
 				res.status(500).json({ message: 'Something went wrong' });
 			}
 		}
