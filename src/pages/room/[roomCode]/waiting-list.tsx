@@ -1,7 +1,7 @@
 import Button from '@/components/button/button';
 import PlayersList from '@/components/players-list/players-list';
 import { db } from '@/utils/db/firebase';
-import { doc, onSnapshot } from 'firebase/firestore';
+import { collection, onSnapshot } from 'firebase/firestore';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
@@ -10,24 +10,25 @@ const WaitingList: React.FC = () => {
 	const {
 		query: { roomCode },
 	} = router;
-	const [waitingList, setWaitingList] = useState([]);
+	const [waitingList, setWaitingList] = useState<any[]>([]);
 
 	useEffect(() => {
 		if (!roomCode || Array.isArray(roomCode)) {
 			return;
 		}
-		const roomDocRef = doc(db, 'rooms', roomCode);
+		const playersCollection = collection(db, 'rooms', roomCode, 'players');
 
-		const unsubscribe = onSnapshot(roomDocRef, (docSnap) => {
-			if (docSnap.exists()) {
-				const { players } = docSnap.data();
-				const waitingPlayers = players.filter(
-					(player: any) => player.status === 'pending'
-				);
-				setWaitingList(waitingPlayers);
-			} else {
-				console.log('Room does not exist!');
-			}
+		const unsubscribe = onSnapshot(playersCollection, (docSnap) => {
+			const players = docSnap.docs.map((doc: any) => ({
+				id: doc.id,
+				...doc.data(),
+			}));
+
+			const waitingPlayers = players.filter(
+				(player: any) => player.status === 'pending'
+			);
+
+			setWaitingList(waitingPlayers);
 		});
 
 		return () => unsubscribe();

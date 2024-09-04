@@ -1,6 +1,6 @@
 import Button from '@/components/button/button';
 import { auth, db } from '@/utils/db/firebase';
-import { doc, onSnapshot } from 'firebase/firestore';
+import { collection, onSnapshot } from 'firebase/firestore';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
@@ -14,23 +14,21 @@ const WaitPage = () => {
 		if (!roomCode || Array.isArray(roomCode)) {
 			return;
 		}
-		const roomDocRef = doc(db, 'rooms', roomCode);
+		const roomDocRef = collection(db, 'rooms', roomCode, 'players');
 
 		const unsubscribe = onSnapshot(roomDocRef, (docSnap) => {
-			if (docSnap.exists()) {
-				const { players } = docSnap.data();
-				const player = players.find(
-					(player: any) => player.id === user?.uid
-				);
-				console.log(player.status);
-				if (player.status === 'accepted') {
-					router.push(`/room/${roomCode}/lobby`);
-				}
-				if (player.status === 'decline') {
-					router.back();
-				}
-			} else {
-				console.log('Room does not exist!');
+			const players = docSnap.docs.map((doc: any) => ({
+				id: doc.id,
+				...doc.data(),
+			}));
+			const player = players.find(
+				(player: any) => player.id === user?.uid
+			);
+			if (!player) {
+				router.back();
+			}
+			if (player?.status === 'accepted') {
+				router.push(`/room/${roomCode}/lobby`);
 			}
 		});
 
