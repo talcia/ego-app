@@ -7,12 +7,12 @@ const HomePage = () => {
 		<>
 			<Logo />
 			<div className="flex flex-col items-center">
-				<Button variant="white">
-					<Link href="/auth">Login</Link>
-				</Button>
-				<Button variant="white">
-					<Link href="/guest">Play as guest</Link>
-				</Button>
+				<Link href="/auth">
+					<Button variant="white">Login</Button>
+				</Link>
+				<Link href="/guest">
+					<Button variant="white">Play as guest</Button>
+				</Link>
 			</div>
 		</>
 	);

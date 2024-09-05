@@ -2,13 +2,15 @@ import Button from '@/components/button/button';
 import PlayerAvatar from '@/components/question-page/player-avatar';
 import AnswerWithBadgeList from '@/components/summarize-page/answer-with-badge-list';
 import PointsResult from '@/components/summarize-page/points-results';
+import RoundContext from '@/store/round-context';
 import { auth, db } from '@/utils/db/firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 
 const RoundSummarizePage = () => {
+	const { numberOfRounds } = useContext(RoundContext);
 	const router = useRouter();
 	const {
 		query: { roundNumber, roomCode },
@@ -58,10 +60,16 @@ const RoundSummarizePage = () => {
 		const isEveryPlayerReady = roundData?.playersAnswers.every(
 			(player: any) => player.isReadyForNextRound
 		);
-		if (isEveryPlayerReady) {
+
+		if (!isEveryPlayerReady) {
+			return;
+		}
+		if (Number(roundNumber) === numberOfRounds) {
+			router.push(`/room/${roomCode}/round/finish`);
+		} else {
 			router.push(`/room/${roomCode}/round/${Number(roundNumber) + 1}`);
 		}
-	}, [roomCode, roundData, roundNumber, router]);
+	}, [numberOfRounds, roomCode, roundData, roundNumber, router]);
 
 	if (!roundData) {
 		return;
@@ -110,12 +118,21 @@ const RoundSummarizePage = () => {
 				/>
 			)}
 			<div>
-				<Button
-					onClick={handleOnReadyClick}
-					variant={isUserReady ? 'white' : 'red'}
-				>
-					{isUserReady ? 'Not ready' : 'Next'}
-				</Button>
+				{Number(roundNumber) === numberOfRounds ? (
+					<Button
+						onClick={handleOnReadyClick}
+						variant={isUserReady ? 'white' : 'red'}
+					>
+						{isUserReady ? 'Not ready' : 'See Results'}
+					</Button>
+				) : (
+					<Button
+						onClick={handleOnReadyClick}
+						variant={isUserReady ? 'white' : 'red'}
+					>
+						{isUserReady ? 'Not ready' : 'Next'}
+					</Button>
+				)}
 			</div>
 		</>
 	);

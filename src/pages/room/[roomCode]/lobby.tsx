@@ -1,6 +1,7 @@
 import Button from '@/components/button/button';
 import PlayersList from '@/components/players-list/players-list';
 import AdminContext from '@/store/admin-context';
+import RoundContext from '@/store/round-context';
 import { auth, db } from '@/utils/db/firebase';
 import { collection, doc, onSnapshot } from 'firebase/firestore';
 import Link from 'next/link';
@@ -15,10 +16,10 @@ const RoomLobby: React.FC = () => {
 	} = router;
 	const [players, setPlayers] = useState<any[]>([]);
 	const [waitingList, setWaitingList] = useState<any[]>([]);
-	const { isAdmin } = useContext(AdminContext);
+	const { isAdmin, setIsAdmin } = useContext(AdminContext);
 	const [user] = useAuthState(auth);
 	const [isReady, setIsReady] = useState(false);
-
+	const { setNumberOfRounds } = useContext(RoundContext);
 	useEffect(() => {
 		if (!roomCode || Array.isArray(roomCode)) {
 			return;
@@ -28,7 +29,11 @@ const RoomLobby: React.FC = () => {
 
 		const unsubscribe = onSnapshot(roomDocRef, (docSnap) => {
 			if (docSnap.exists()) {
-				const { status } = docSnap.data();
+				const { status, numberOfRounds, owner } = docSnap.data();
+				if (owner === user?.uid) {
+					setIsAdmin(true);
+				}
+				setNumberOfRounds(numberOfRounds);
 				if (status === 'started') {
 					router.push(`/room/${roomCode}/round`);
 				}
@@ -36,7 +41,7 @@ const RoomLobby: React.FC = () => {
 		});
 
 		return () => unsubscribe();
-	}, [roomCode, router]);
+	}, [roomCode, router, setIsAdmin, setNumberOfRounds, user?.uid]);
 
 	useEffect(() => {
 		if (!roomCode || Array.isArray(roomCode)) {

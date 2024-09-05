@@ -18,21 +18,21 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 			return;
 		}
 
-		const { roomRef } = response;
+		const { roomRef, room } = response;
 
 		try {
-			await updateDoc(response.roomRef, {
+			await updateDoc(roomRef, {
 				status: 'started',
 			});
 
 			const shuffledQuestionsArray = await getShuffledQuestionArray();
 			const players = await getPlayersArray(roomRef);
-			const numberOfRounds = response.room.data().numberOfRounds;
+			const numberOfRounds = room.data().numberOfRounds;
 
 			const roundsCollection = collection(roomRef, 'rounds');
 
 			let playerIndex = 0;
-			for (let i = 0; i <= numberOfRounds; i++) {
+			for (let i = 1; i <= numberOfRounds; i++) {
 				const { question, answers } = shuffledQuestionsArray[i];
 				if (playerIndex === players.length) {
 					playerIndex = 0;
@@ -55,14 +55,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 					},
 					correctAnswer: '',
 				};
-				const roundRef = doc(roundsCollection, String(i + 1));
+				const roundRef = doc(roundsCollection, String(i));
 				await setDoc(roundRef, roundData);
 				playerIndex += 1;
 			}
 
 			res.status(201).json({ message: 'Room started' });
 		} catch (e) {
-			console.log(e);
 			res.status(500).json({ message: 'Something went wrong' });
 		}
 	}
