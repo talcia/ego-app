@@ -40,7 +40,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 					'players',
 					player.id
 				);
-				await updateDoc(playerRef, { points: 10, isReady: false });
+				await updateDoc(playerRef, { points: 2, isReady: false });
 			}
 
 			const roundsCollection = collection(

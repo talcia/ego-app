@@ -1,7 +1,7 @@
-import { getPlayerData } from '@/utils/api/players';
+import PlayerContext from '@/store/player-context';
 import { auth } from '@/utils/db/firebase';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 
 interface PointsResultProps {
@@ -16,39 +16,34 @@ const PointsResult: React.FC<PointsResultProps> = ({
 	correctAnswer,
 	userAnswer: { coin, answer },
 }) => {
+	const { points, setPoints, setIsEliminated } = useContext(PlayerContext);
 	const {
-		query: { roomCode },
+		query: { roomCode, roundNumber },
 	} = useRouter();
-	const [user] = useAuthState(auth);
-	const [playerPoints, setPlayerPoints] = useState(0);
 	const isUserAnswerCorrect = correctAnswer === answer;
+	const [user] = useAuthState(auth);
 
 	useEffect(() => {
-		const getPlayerPoints = async () => {
-			if (!user?.uid || !roomCode || Array.isArray(roomCode)) {
-				return;
-			}
-			const playerData = await getPlayerData(roomCode, user.uid);
-			setPlayerPoints(playerData?.points);
-		};
-		getPlayerPoints();
-	}, [roomCode, user?.uid]);
-
-	useEffect(() => {
-		let pointsToUpdate = playerPoints;
 		if (isUserAnswerCorrect) {
-			pointsToUpdate += coin;
+			setPoints(points + coin);
 		} else {
-			pointsToUpdate -= coin;
+			setPoints(points - coin);
 		}
-		fetch(`/api/room/${roomCode}/player/${user?.uid}`, {
-			method: 'PATCH',
-			body: JSON.stringify({ key: 'points', value: pointsToUpdate }),
-			headers: {
-				'Content-Type': 'application/json',
-			},
-		});
-	}, [isUserAnswerCorrect, playerPoints, roomCode, user?.uid, coin]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [coin, isUserAnswerCorrect]);
+
+	useEffect(() => {
+		if (points === 0) {
+			setIsEliminated(true);
+			fetch(`/api/room/${roomCode}/round/${roundNumber}/eliminate`, {
+				method: 'POST',
+				body: JSON.stringify({ userId: user?.uid }),
+				headers: {
+					'Content-Type': 'application/json',
+				},
+			});
+		}
+	}, [points, roomCode, roundNumber, setIsEliminated, user?.uid]);
 
 	return (
 		<div>

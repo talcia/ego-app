@@ -13,6 +13,7 @@ interface PlayerData {
 	coin?: number;
 	isReady?: boolean;
 	isReadyForNextRound?: boolean;
+	isEliminated?: boolean;
 }
 
 export const updatePlayerAnswer = async (

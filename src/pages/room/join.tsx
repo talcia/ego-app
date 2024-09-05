@@ -20,7 +20,7 @@ const JoinRoom: React.FC = () => {
 				user: {
 					name: user?.displayName || user?.email,
 					avatar: user?.photoURL,
-					points: 10,
+					points: 2,
 					id: user?.uid,
 					isReady: false,
 					status: 'pending',

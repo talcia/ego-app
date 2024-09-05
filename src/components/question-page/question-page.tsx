@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import AnswersList, { Answer } from './answers-list';
 import PlayerAvatar from './player-avatar';
 import Coin from './coin';
@@ -8,7 +8,7 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import PlayersAvatarList from '../players-list/players-list-avatars';
 import { pushPlayerAnswer } from '@/utils/api/rounds';
 import router from 'next/router';
-import { getPlayerData } from '@/utils/api/players';
+import PlayerContext from '@/store/player-context';
 
 export interface QuestionPageProps {
 	question: string;
@@ -29,7 +29,7 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
 }) => {
 	const [selectedCoins, setSelectedCoins] = useState(0);
 	const [selectedAnswer, setSelectedAnswer] = useState('');
-	const [playerPoints, setPlayerPoints] = useState(0);
+	const { points, isEliminated } = useContext(PlayerContext);
 	const [isReady, setIsReady] = useState(false);
 
 	const {
@@ -39,15 +39,14 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
 	const [user] = useAuthState(auth);
 
 	useEffect(() => {
-		const getPlayerPoints = async () => {
-			if (!user?.uid || !roomCode || Array.isArray(roomCode)) {
-				return;
-			}
-			const player = await getPlayerData(roomCode, user.uid);
-			setPlayerPoints(Number(player?.points));
-		};
-		getPlayerPoints();
-	});
+		pushPlayerAnswer({
+			roomCode: roomCode as string,
+			roundNumber: roundNumber as string,
+			playerData: {
+				isReadyForNextRound: true,
+			},
+		});
+	}, [isEliminated, roomCode, roundNumber]);
 
 	const onClickReady = () => {
 		setIsReady((prev) => !prev);
@@ -55,11 +54,14 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
 			roomCode: roomCode as string,
 			roundNumber: roundNumber as string,
 			playerData: {
-				answer: selectedAnswer,
-				coin: selectedCoins,
-				id: user?.uid,
+				isEliminated,
 				isReady,
-				isReadyForNextRound: false,
+				...(!isEliminated && {
+					answer: selectedAnswer,
+					coin: selectedCoins,
+					id: user?.uid,
+					isReadyForNextRound: false,
+				}),
 			},
 			userId: questionAboutPlayer.id,
 		});
@@ -85,32 +87,37 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
 					setSelectedAnswer={setSelectedAnswer}
 				/>
 			</div>
-			{questionAboutPlayer.id !== user?.uid && (
+			{questionAboutPlayer.id !== user?.uid && !isEliminated && (
 				<div className="mt-3">
 					<div className="flex justify-around">
 						<Coin
 							onCoinClick={setSelectedCoins}
-							playerCoin={playerPoints}
+							playerCoin={points}
 						/>
 						<Coin
 							onCoinClick={setSelectedCoins}
-							playerCoin={playerPoints}
+							playerCoin={points}
 						/>
 					</div>
 					<p className="white-text text-center mt-3">
-						You have {playerPoints} coins
+						You have {points} coins
 					</p>
 				</div>
 			)}
-			<Button
-				disabled={
-					!(questionAboutPlayer.id === user?.uid && selectedAnswer) &&
-					(!selectedAnswer || !selectedCoins)
-				}
-				onClick={onClickReady}
-			>
-				{isReady ? 'Change anwser' : 'Ready'}
-			</Button>
+			{(!isEliminated || questionAboutPlayer.id === user?.uid) && (
+				<Button
+					disabled={
+						!(
+							questionAboutPlayer.id === user?.uid &&
+							selectedAnswer
+						) &&
+						(!selectedAnswer || !selectedCoins)
+					}
+					onClick={onClickReady}
+				>
+					{isReady ? 'Change anwser' : 'Ready'}
+				</Button>
+			)}
 		</div>
 	);
 };

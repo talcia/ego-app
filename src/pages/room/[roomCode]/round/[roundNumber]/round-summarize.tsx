@@ -2,6 +2,7 @@ import Button from '@/components/button/button';
 import PlayerAvatar from '@/components/question-page/player-avatar';
 import AnswerWithBadgeList from '@/components/summarize-page/answer-with-badge-list';
 import PointsResult from '@/components/summarize-page/points-results';
+import PlayerContext from '@/store/player-context';
 import RoundContext from '@/store/round-context';
 import { auth, db } from '@/utils/db/firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
@@ -11,6 +12,7 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 
 const RoundSummarizePage = () => {
 	const { numberOfRounds } = useContext(RoundContext);
+	const { points } = useContext(PlayerContext);
 	const router = useRouter();
 	const {
 		query: { roundNumber, roomCode },
@@ -45,6 +47,21 @@ const RoundSummarizePage = () => {
 	}, [roomCode, roundNumber]);
 
 	useEffect(() => {
+		if (points === 0) {
+			fetch(`/api/room/${roomCode}/player/${user?.uid}`, {
+				method: 'PATCH',
+				body: JSON.stringify({
+					key: 'points',
+					value: 0,
+				}),
+				headers: {
+					'Content-Type': 'application/json',
+				},
+			});
+		}
+	});
+
+	useEffect(() => {
 		if (roundData) {
 			const player = roundData?.playersAnswers.find(
 				(player: any) => player.id === user?.uid
@@ -64,7 +81,10 @@ const RoundSummarizePage = () => {
 		if (!isEveryPlayerReady) {
 			return;
 		}
-		if (Number(roundNumber) === numberOfRounds) {
+
+		if (roundData?.eliminatedPlayers.length !== 0) {
+			router.push(`/room/${roomCode}/round/${roundNumber}/eliminated`);
+		} else if (Number(roundNumber) === numberOfRounds) {
 			router.push(`/room/${roomCode}/round/finish`);
 		} else {
 			router.push(`/room/${roomCode}/round/${Number(roundNumber) + 1}`);
@@ -82,6 +102,7 @@ const RoundSummarizePage = () => {
 				playerData: {
 					id: user?.uid,
 					isReadyForNextRound: !isUserReady,
+					...(points === 0 && { isEliminated: true }),
 				},
 			}),
 			headers: {

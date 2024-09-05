@@ -1,7 +1,7 @@
 import Button from '@/components/button/button';
 import Error from '@/components/error/error';
 import Input from '@/components/input/input';
-import AdminContext from '@/store/admin-context';
+import AdminContext from '@/store/player-context';
 import RoundContext from '@/store/round-context';
 import { auth, db } from '@/utils/db/firebase';
 import { collection, getDocs } from 'firebase/firestore';
@@ -35,7 +35,7 @@ const CreateRoom: React.FC = () => {
 				user: {
 					name: user?.displayName || user?.email,
 					avatar: user?.photoURL,
-					points: 10,
+					points: 2,
 					admin: true,
 					id: user?.uid,
 					isReady: true,

@@ -1,12 +1,6 @@
 import { getRoomByCode } from '@/utils/api/rooms';
 import { getPlayersArray, getShuffledQuestionArray } from '@/utils/api/rounds';
-import {
-	collection,
-	doc,
-	getDocs,
-	setDoc,
-	updateDoc,
-} from 'firebase/firestore';
+import { collection, doc, setDoc, updateDoc } from 'firebase/firestore';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 // api/room/code/start
@@ -46,6 +40,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 						answer: '',
 						coin: 0,
 						isReady: false,
+						isEliminated: false,
 						isReadyForNextRound: false,
 					})),
 					questionAboutPlayer: {
@@ -54,6 +49,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 						avatar: players[playerIndex].avatar,
 					},
 					correctAnswer: '',
+					eliminatedPlayers: [],
 				};
 				const roundRef = doc(roundsCollection, String(i));
 				await setDoc(roundRef, roundData);

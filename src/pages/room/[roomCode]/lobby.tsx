@@ -1,6 +1,6 @@
 import Button from '@/components/button/button';
 import PlayersList from '@/components/players-list/players-list';
-import AdminContext from '@/store/admin-context';
+import AdminContext from '@/store/player-context';
 import RoundContext from '@/store/round-context';
 import { auth, db } from '@/utils/db/firebase';
 import { collection, doc, onSnapshot } from 'firebase/firestore';
@@ -20,6 +20,7 @@ const RoomLobby: React.FC = () => {
 	const [user] = useAuthState(auth);
 	const [isReady, setIsReady] = useState(false);
 	const { setNumberOfRounds } = useContext(RoundContext);
+
 	useEffect(() => {
 		if (!roomCode || Array.isArray(roomCode)) {
 			return;

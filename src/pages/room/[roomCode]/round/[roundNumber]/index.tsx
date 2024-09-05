@@ -2,11 +2,12 @@ import Logo from '@/components/logo/logo';
 import QuestionPage, {
 	QuestionPageProps,
 } from '@/components/question-page/question-page';
-import { db } from '@/utils/db/firebase';
+import { auth, db } from '@/utils/db/firebase';
 import { doc, getDoc, onSnapshot } from 'firebase/firestore';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import { useAuthState } from 'react-firebase-hooks/auth';
 
 const RoundPage: React.FC<QuestionPageProps> = ({
 	question,
@@ -17,6 +18,7 @@ const RoundPage: React.FC<QuestionPageProps> = ({
 	const router = useRouter();
 	const [isRoundNumberShow, setIsRoundNumberShow] = useState(true);
 	const { roundNumber, roomCode } = router.query;
+	const [user] = useAuthState(auth);
 
 	useEffect(() => {
 		const timer = setTimeout(() => {
@@ -36,9 +38,11 @@ const RoundPage: React.FC<QuestionPageProps> = ({
 		);
 
 		const unsubscribe = onSnapshot(roundCollection, (docSnap) => {
-			const isEveryPlayerReady = docSnap
-				.data()
-				?.playersAnswers.every((player: any) => player.isReady);
+			const players = docSnap.data()?.playersAnswers;
+			const isEveryPlayerReady = players.every(
+				(player: any) => player.isReady
+			);
+
 			if (isEveryPlayerReady) {
 				router.push(
 					`/room/${roomCode}/round/${roundNumber}/round-summarize`
@@ -47,7 +51,7 @@ const RoundPage: React.FC<QuestionPageProps> = ({
 		});
 
 		return () => unsubscribe();
-	}, [roomCode, roundNumber, router]);
+	}, [roomCode, roundNumber, router, user?.uid]);
 
 	return (
 		<>
