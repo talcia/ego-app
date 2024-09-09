@@ -3,7 +3,7 @@ import { createContext, useState } from 'react';
 const PlayerContext = createContext({
 	isAdmin: false,
 	setIsAdmin: (value: boolean) => {},
-	points: 2,
+	points: 10,
 	setPoints: (value: number) => {},
 	isEliminated: false,
 	setIsEliminated: (value: boolean) => {},
@@ -11,7 +11,7 @@ const PlayerContext = createContext({
 
 export function PlayerContextProvider(props: { children: React.ReactNode }) {
 	const [isAdmin, setIsAdmin] = useState(false);
-	const [points, setPoints] = useState(2);
+	const [points, setPoints] = useState(10);
 	const [isEliminated, setIsEliminated] = useState(false);
 
 	return (

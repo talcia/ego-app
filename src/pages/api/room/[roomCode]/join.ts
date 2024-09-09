@@ -15,11 +15,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 			return;
 		}
 
+		const { roomRef, room } = resposne;
+		const initialPoints = room.data().initialPoints;
+
 		try {
-			const playersCollection = collection(resposne.roomRef, 'players');
+			const playersCollection = collection(roomRef, 'players');
 			const playerRef = doc(playersCollection, user.id);
 			await setDoc(playerRef, {
 				...user,
+				points: initialPoints,
 				admin: false,
 				status: 'pending',
 			});

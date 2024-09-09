@@ -17,11 +17,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 			return;
 		}
 
-		const { roomRef } = response;
+		const { roomRef, room } = response;
+		const initialPoints = room.data().initialPoints;
 
 		try {
 			await updateDoc(roomRef, {
 				status: 'pending',
+				eliminatedPlayers: [],
 			});
 
 			const playersCollection = collection(
@@ -40,7 +42,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 					'players',
 					player.id
 				);
-				await updateDoc(playerRef, { points: 2, isReady: false });
+				await updateDoc(playerRef, {
+					points: initialPoints,
+					isEliminated: false,
+					isReady: false,
+				});
 			}
 
 			const roundsCollection = collection(

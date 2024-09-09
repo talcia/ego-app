@@ -62,14 +62,11 @@ export const pushPlayerAnswer = async ({
 		method: 'POST',
 		body: JSON.stringify({
 			playerData: {
-				id: playerData.id,
-				answer: playerData.answer,
-				coin: playerData.coin,
-				isReady: !playerData.isReady,
+				...playerData,
 				isReadyForNextRound: false,
 			},
 			...(playerData.id === userId && {
-				correctAnswer: playerData.isReady ? null : playerData.answer,
+				correctAnswer: playerData.answer,
 			}),
 		}),
 		headers: {

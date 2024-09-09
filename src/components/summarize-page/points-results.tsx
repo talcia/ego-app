@@ -1,7 +1,7 @@
 import PlayerContext from '@/store/player-context';
 import { auth } from '@/utils/db/firebase';
 import { useRouter } from 'next/router';
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 
 interface PointsResultProps {
@@ -16,7 +16,9 @@ const PointsResult: React.FC<PointsResultProps> = ({
 	correctAnswer,
 	userAnswer: { coin, answer },
 }) => {
-	const { points, setPoints, setIsEliminated } = useContext(PlayerContext);
+	const { points, setPoints, setIsEliminated, isEliminated } =
+		useContext(PlayerContext);
+	const [isEliminatedFromPrevRound, _] = useState(isEliminated);
 	const {
 		query: { roomCode, roundNumber },
 	} = useRouter();
@@ -33,7 +35,7 @@ const PointsResult: React.FC<PointsResultProps> = ({
 	}, [coin, isUserAnswerCorrect]);
 
 	useEffect(() => {
-		if (points === 0) {
+		if (points === 0 && !isEliminated) {
 			setIsEliminated(true);
 			fetch(`/api/room/${roomCode}/round/${roundNumber}/eliminate`, {
 				method: 'POST',
@@ -43,21 +45,27 @@ const PointsResult: React.FC<PointsResultProps> = ({
 				},
 			});
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [points, roomCode, roundNumber, setIsEliminated, user?.uid]);
 
 	return (
-		<div>
-			{isUserAnswerCorrect && (
-				<p className="white-text">
-					Correct Answer, you get {coin} coin{coin > 1 ?? 's'}
-				</p>
+		<>
+			{!isEliminatedFromPrevRound && (
+				<div>
+					{isUserAnswerCorrect && (
+						<p className="text-customWhite">
+							Correct Answer, you get {coin} coin{coin > 1 && 's'}
+						</p>
+					)}
+					{!isUserAnswerCorrect && (
+						<p className="text-customWhite">
+							not Correct Answer, you loose {coin} coin
+							{coin > 1 && 's'}
+						</p>
+					)}
+				</div>
 			)}
-			{!isUserAnswerCorrect && (
-				<p className="white-text">
-					not Correct Answer, you loose {coin} coin{coin > 1 ?? 's'}
-				</p>
-			)}
-		</div>
+		</>
 	);
 };
 

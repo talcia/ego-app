@@ -1,6 +1,14 @@
 import { getRoomByCode } from '@/utils/api/rooms';
 import { getPlayersArray, getShuffledQuestionArray } from '@/utils/api/rounds';
-import { collection, doc, setDoc, updateDoc } from 'firebase/firestore';
+import { db } from '@/utils/db/firebase';
+import {
+	collection,
+	deleteDoc,
+	doc,
+	getDocs,
+	setDoc,
+	updateDoc,
+} from 'firebase/firestore';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 // api/room/code/start
@@ -24,6 +32,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 			const numberOfRounds = room.data().numberOfRounds;
 
 			const roundsCollection = collection(roomRef, 'rounds');
+			const roundsSnapshot = await getDocs(roundsCollection);
+
+			const deletePromises = roundsSnapshot.docs.map((document) =>
+				deleteDoc(doc(db, 'rooms', 'rounds', document.id))
+			);
+
+			await Promise.all(deletePromises);
 
 			let playerIndex = 0;
 			for (let i = 1; i <= numberOfRounds; i++) {
@@ -50,6 +65,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 					},
 					correctAnswer: '',
 					eliminatedPlayers: [],
+					endGame: false,
 				};
 				const roundRef = doc(roundsCollection, String(i));
 				await setDoc(roundRef, roundData);

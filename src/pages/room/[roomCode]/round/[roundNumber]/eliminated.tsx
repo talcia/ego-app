@@ -1,64 +1,35 @@
-import RoundContext from '@/store/round-context';
 import { db } from '@/utils/db/firebase';
-import { doc, getDoc } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
+import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
-const PlayerEliminatedPage = () => {
+interface PlayerEliminatedPageProps {
+	isEndGame: boolean;
+	eliminatedPlayers: {
+		id: string;
+		name: string;
+		avatar: string;
+	}[];
+}
+
+const PlayerEliminatedPage: React.FC<PlayerEliminatedPageProps> = ({
+	isEndGame,
+	eliminatedPlayers,
+}) => {
 	const router = useRouter();
-	const [eliminatedPlayers, setEliminatedPlayers] = useState<any[]>([]);
 	const [index, setIndex] = useState(0);
-	const { numberOfRounds } = useContext(RoundContext);
 	const {
 		query: { roomCode, roundNumber },
 	} = router;
 
-	// przeniesc do server sdie props
-	useEffect(() => {
-		if (!roomCode || Array.isArray(roomCode)) {
-			return;
-		}
-		const getData = async () => {
-			const roundCollection = doc(
-				db,
-				'rooms',
-				roomCode,
-				'rounds',
-				roundNumber as string
-			);
-
-			const roundRef = await getDoc(roundCollection);
-			const eliminatedPlayers = roundRef.data()?.eliminatedPlayers;
-
-			const eliminatedPlayersData: any[] = [];
-			for (let player of eliminatedPlayers) {
-				const playerCollection = doc(
-					db,
-					'rooms',
-					roomCode,
-					'players',
-					player as string
-				);
-				const playerRef = await getDoc(playerCollection);
-				const { id, name, avatar } = playerRef.data() || {};
-				eliminatedPlayersData.push({ id, name, avatar });
-			}
-			setEliminatedPlayers(eliminatedPlayersData);
-		};
-
-		getData();
-	}, [roomCode, roundNumber]);
-
-	console.log(index);
-
 	useEffect(() => {
 		const timer = setInterval(() => {
-			console.log('timer');
 			if (eliminatedPlayers[index + 1]) {
 				setIndex((prev) => prev + 1);
 				return;
 			}
-			if (Number(roundNumber) === numberOfRounds) {
+			if (isEndGame) {
 				router.push(`/room/${roomCode}/round/finish`);
 			} else {
 				router.push(
@@ -67,24 +38,69 @@ const PlayerEliminatedPage = () => {
 			}
 		}, 4000);
 		return () => clearInterval(timer);
-	}, [
-		eliminatedPlayers,
-		index,
-		numberOfRounds,
-		roomCode,
-		roundNumber,
-		router,
-	]);
+	}, [eliminatedPlayers, index, isEndGame, roomCode, roundNumber, router]);
 
 	if (eliminatedPlayers.length === 0) {
 		return;
 	}
 
 	return (
-		<div className="white-text">
+		<div className="text-customWhite">
 			{eliminatedPlayers[index].name} was eliminated
 		</div>
 	);
 };
 
 export default PlayerEliminatedPage;
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+	const { roundNumber, roomCode } = context.params!;
+	const roundCollection = doc(
+		db,
+		'rooms',
+		roomCode as string,
+		'rounds',
+		roundNumber as string
+	);
+
+	const roundRef = await getDoc(roundCollection);
+	const roundData = roundRef.data();
+
+	const eliminatedPlayers = roundData?.eliminatedPlayers;
+	const eliminatedPlayersArray: any[] = [];
+	for (let player of eliminatedPlayers) {
+		const playerCollection = doc(
+			db,
+			'rooms',
+			roomCode as string,
+			'players',
+			player
+		);
+		const playerRef = await getDoc(playerCollection);
+		const { id, name, avatar } = playerRef.data() || {};
+		eliminatedPlayersArray.push({ id, name, avatar });
+	}
+
+	const roomCollection = doc(db, 'rooms', roomCode as string);
+	const room = await getDoc(roomCollection);
+	const roomData = room.data();
+
+	const playersCollection = collection(
+		db,
+		'rooms',
+		roomCode as string,
+		'players'
+	);
+	const playersData = await getDocs(playersCollection);
+	const players = playersData.docs;
+
+	const isLastRound = roomData?.numberOfRounds === Number(roundNumber);
+	const isEndGame = roomData?.eliminatedPlayers.length === players.length - 1;
+
+	return {
+		props: {
+			eliminatedPlayers: eliminatedPlayersArray,
+			isEndGame: isEndGame || isLastRound,
+		},
+	};
+};

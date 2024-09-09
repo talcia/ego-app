@@ -5,11 +5,13 @@ import { NextApiRequest, NextApiResponse } from 'next';
 // api/room
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 	if (req.method === 'POST') {
-		const { roomCode, user, numberOfRounds } = req.body as unknown as {
-			roomCode: string;
-			user: any;
-			numberOfRounds: number;
-		};
+		const { roomCode, user, numberOfRounds, initialPoints } =
+			req.body as unknown as {
+				roomCode: string;
+				user: any;
+				numberOfRounds: number;
+				initialPoints: number;
+			};
 		const roomRef = doc(db, 'rooms', roomCode);
 		const room = await getDoc(roomRef);
 
@@ -25,10 +27,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 					owner: user.id,
 					status: 'pending',
 					numberOfRounds,
+					initialPoints,
+					eliminatedPlayers: [],
 				});
 				const playersCollection = collection(roomRef, 'players');
 				const userRef = doc(playersCollection, user.id);
-				await setDoc(userRef, user);
+				await setDoc(userRef, { ...user, points: initialPoints });
 				res.status(201).json({ message: 'Room created' });
 			} catch (e) {
 				res.status(500).json({ message: 'Something went wrong' });

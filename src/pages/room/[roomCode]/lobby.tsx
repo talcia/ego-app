@@ -1,6 +1,6 @@
 import Button from '@/components/button/button';
 import PlayersList from '@/components/players-list/players-list';
-import AdminContext from '@/store/player-context';
+import PlayerContext from '@/store/player-context';
 import RoundContext from '@/store/round-context';
 import { auth, db } from '@/utils/db/firebase';
 import { collection, doc, onSnapshot } from 'firebase/firestore';
@@ -16,7 +16,8 @@ const RoomLobby: React.FC = () => {
 	} = router;
 	const [players, setPlayers] = useState<any[]>([]);
 	const [waitingList, setWaitingList] = useState<any[]>([]);
-	const { isAdmin, setIsAdmin } = useContext(AdminContext);
+	const { isAdmin, setIsAdmin, setPoints, setIsEliminated } =
+		useContext(PlayerContext);
 	const [user] = useAuthState(auth);
 	const [isReady, setIsReady] = useState(false);
 	const { setNumberOfRounds } = useContext(RoundContext);
@@ -30,11 +31,14 @@ const RoomLobby: React.FC = () => {
 
 		const unsubscribe = onSnapshot(roomDocRef, (docSnap) => {
 			if (docSnap.exists()) {
-				const { status, numberOfRounds, owner } = docSnap.data();
+				const { status, numberOfRounds, owner, initialPoints } =
+					docSnap.data();
 				if (owner === user?.uid) {
 					setIsAdmin(true);
 				}
 				setNumberOfRounds(numberOfRounds);
+				setPoints(initialPoints);
+				setIsEliminated(false);
 				if (status === 'started') {
 					router.push(`/room/${roomCode}/round`);
 				}
@@ -42,7 +46,15 @@ const RoomLobby: React.FC = () => {
 		});
 
 		return () => unsubscribe();
-	}, [roomCode, router, setIsAdmin, setNumberOfRounds, user?.uid]);
+	}, [
+		roomCode,
+		router,
+		setIsAdmin,
+		setIsEliminated,
+		setNumberOfRounds,
+		setPoints,
+		user?.uid,
+	]);
 
 	useEffect(() => {
 		if (!roomCode || Array.isArray(roomCode)) {
@@ -98,16 +110,18 @@ const RoomLobby: React.FC = () => {
 
 	return (
 		<div className="flex flex-col">
-			<h1 className="white-text text-center text-2xl mb-5">{roomCode}</h1>
+			<h1 className="text-customWhite text-center text-2xl mb-5">
+				{roomCode}
+			</h1>
 			{isAdmin && (
 				<Link href={`/room/${roomCode}/waiting-list`}>
-					<p className="white-text  text-xl mb-5">
+					<p className="text-customWhite  text-xl mb-5">
 						Waiting List {waitingList.length}
 					</p>
 				</Link>
 			)}
 			<div>
-				<p className="white-text  text-xl mb-5">Players</p>
+				<p className="text-customWhite  text-xl mb-5">Players</p>
 				<PlayersList players={players} isWaitingList={false} />
 			</div>
 			{isReady ? (

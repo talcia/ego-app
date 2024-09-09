@@ -1,6 +1,6 @@
 import Logo from '@/components/logo/logo';
 import { db } from '@/utils/db/firebase';
-import { collection, doc, getDocs, query } from 'firebase/firestore';
+import { collection, onSnapshot } from 'firebase/firestore';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 
@@ -15,24 +15,21 @@ const StartingPage = () => {
 			return;
 		}
 
-		const checkIfCollectionExisit = async () => {
-			const roomDocRef = doc(db, 'rooms', roomCode);
-			const roundCollection = collection(roomDocRef, 'rounds');
-			const q = query(roundCollection);
-			const querySnapshot = await getDocs(q);
+		const roundCollection = collection(db, 'rooms', roomCode, 'rounds');
 
-			if (!querySnapshot.empty) {
+		const unsubscribe = onSnapshot(roundCollection, (docSnap) => {
+			const rounds = docSnap.docs;
+			if (rounds.length) {
 				router.push(`/room/${roomCode}/round/${1}`);
 			}
-		};
-
-		checkIfCollectionExisit();
+		});
+		return () => unsubscribe();
 	}, [roomCode, router]);
 
 	return (
 		<>
 			<Logo />
-			<h1 className="white-text text-center text-2xl mb-5">
+			<h1 className="text-customWhite text-center text-2xl mb-5">
 				Starting...
 			</h1>
 		</>

@@ -74,6 +74,22 @@ const RoundSummarizePage = () => {
 	}, [roundData, user?.uid]);
 
 	useEffect(() => {
+		const finishGame = async () => {
+			const response = await fetch(
+				`/api/room/${roomCode}/player/${user?.uid}`,
+				{
+					method: 'PATCH',
+					body: JSON.stringify({ key: 'points', value: points }),
+					headers: {
+						'Content-Type': 'application/json',
+					},
+				}
+			);
+			if (response.status === 201) {
+				router.push(`/room/${roomCode}/round/finish`);
+			}
+		};
+
 		const isEveryPlayerReady = roundData?.playersAnswers.every(
 			(player: any) => player.isReadyForNextRound
 		);
@@ -81,15 +97,22 @@ const RoundSummarizePage = () => {
 		if (!isEveryPlayerReady) {
 			return;
 		}
-
-		if (roundData?.eliminatedPlayers.length !== 0) {
+		if (roundData?.eliminatedPlayers.length > 0) {
 			router.push(`/room/${roomCode}/round/${roundNumber}/eliminated`);
 		} else if (Number(roundNumber) === numberOfRounds) {
-			router.push(`/room/${roomCode}/round/finish`);
+			finishGame();
 		} else {
 			router.push(`/room/${roomCode}/round/${Number(roundNumber) + 1}`);
 		}
-	}, [numberOfRounds, roomCode, roundData, roundNumber, router]);
+	}, [
+		numberOfRounds,
+		points,
+		roomCode,
+		roundData,
+		roundNumber,
+		router,
+		user?.uid,
+	]);
 
 	if (!roundData) {
 		return;
@@ -115,14 +138,16 @@ const RoundSummarizePage = () => {
 	return (
 		<>
 			<div>
-				<p className="white-text mb-4 text-center">Correct answer is</p>
+				<p className="text-customWhite mb-4 text-center">
+					Correct answer is
+				</p>
 				<PlayerAvatar
 					name={roundData?.questionAboutPlayer.name}
 					photoUrl={roundData?.questionAboutPlayer.avatar}
 				/>
 			</div>
 			<div className="py-5">
-				<p className="white-text my-3">{roundData?.question}</p>
+				<p className="text-customWhite my-3">{roundData?.question}</p>
 				<AnswerWithBadgeList
 					answers={roundData?.answers}
 					correctAnswer={roundData?.correctAnswer}
@@ -142,14 +167,14 @@ const RoundSummarizePage = () => {
 				{Number(roundNumber) === numberOfRounds ? (
 					<Button
 						onClick={handleOnReadyClick}
-						variant={isUserReady ? 'white' : 'red'}
+						variant={isUserReady ? 'customWhite' : 'customRed'}
 					>
 						{isUserReady ? 'Not ready' : 'See Results'}
 					</Button>
 				) : (
 					<Button
 						onClick={handleOnReadyClick}
-						variant={isUserReady ? 'white' : 'red'}
+						variant={isUserReady ? 'customWhite' : 'customRed'}
 					>
 						{isUserReady ? 'Not ready' : 'Next'}
 					</Button>
