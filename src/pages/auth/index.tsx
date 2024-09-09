@@ -42,7 +42,7 @@ const LoginPage = () => {
 					onChange={({ target: { value } }) => setPassword(value)}
 				/>
 				<Button onClick={handleLogin}>Login</Button>
-				<p className="block text-sm mb-2 white-text self-center">
+				<p className="block text-sm mb-2 text-customWhite self-center">
 					<Link href="/auth/reset-password">forget password?</Link>
 				</p>
 			</div>
@@ -51,7 +51,7 @@ const LoginPage = () => {
 				<FacebookLoginButton />
 			</div>
 			<div>
-				<p className="block text-sm mb-2 white-text">
+				<p className="block text-sm mb-2 text-customWhite">
 					<Link href="/auth/sign-up"> Dont have a account?</Link>
 				</p>
 			</div>

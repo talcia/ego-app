@@ -4,11 +4,9 @@ interface ErrorProps {
 
 const Error: React.FC<ErrorProps> = ({ errorMessage = 'An Error occured' }) => {
 	return (
-		<>
-			<p className="text-center max-w-[200px] text-red-500 break-words bg-opacity-50 p-2 rounded-lg">
-				{errorMessage}
-			</p>
-		</>
+		<p className="text-center mx-auto max-w-[200px] text-[#FFD700] break-words bg-opacity-50 p-2 rounded-lg">
+			{errorMessage}
+		</p>
 	);
 };
 

@@ -1,6 +1,7 @@
 import Button from '@/components/button/button';
 import Error from '@/components/error/error';
 import Input from '@/components/input/input';
+import Logo from '@/components/logo/logo';
 import AdminContext from '@/store/player-context';
 import RoundContext from '@/store/round-context';
 import { auth, db } from '@/utils/db/firebase';
@@ -12,6 +13,7 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 const CreateRoom: React.FC = () => {
 	const router = useRouter();
 	const { numberOfRounds, setNumberOfRounds } = useContext(RoundContext);
+	const [initialPoints, setInitialPoints] = useState(10);
 	const [roomCode, setRoomCode] = useState('');
 	const [errorMessage, setErrorMessage] = useState('');
 	const [maxRounds, setMaxRounds] = useState(0);
@@ -35,13 +37,13 @@ const CreateRoom: React.FC = () => {
 				user: {
 					name: user?.displayName || user?.email,
 					avatar: user?.photoURL,
-					points: 2,
 					admin: true,
 					id: user?.uid,
 					isReady: true,
 					status: 'accepted',
 				},
-				numberOfRounds: numberOfRounds,
+				numberOfRounds,
+				initialPoints,
 			}),
 			headers: {
 				'Content-Type': 'application/json',
@@ -57,8 +59,9 @@ const CreateRoom: React.FC = () => {
 	};
 
 	return (
-		<div className="flex flex-col">
-			<h1 className="white-text text-center text-2xl mb-5">
+		<div className="flex flex-col justify-center">
+			<Logo />
+			<h1 className="text-customWhite text-center text-2xl mb-5">
 				Creating Room
 			</h1>
 			{errorMessage && <Error errorMessage={errorMessage} />}
@@ -74,7 +77,13 @@ const CreateRoom: React.FC = () => {
 				max={maxRounds}
 				onChange={({ target: { value } }) => setNumberOfRounds(+value)}
 			/>
-
+			<Input
+				label="Player initial points"
+				type="number"
+				value={initialPoints}
+				max={10}
+				onChange={({ target: { value } }) => setInitialPoints(+value)}
+			/>
 			<Button onClick={handleCreateRoom}>Create room</Button>
 		</div>
 	);

@@ -20,7 +20,6 @@ const JoinRoom: React.FC = () => {
 				user: {
 					name: user?.displayName || user?.email,
 					avatar: user?.photoURL,
-					points: 2,
 					id: user?.uid,
 					isReady: false,
 					status: 'pending',
@@ -42,7 +41,7 @@ const JoinRoom: React.FC = () => {
 		<>
 			<Logo />
 			<div>
-				<h1 className="white-text text-center text-2xl mb-5">
+				<h1 className="text-customWhite text-center text-2xl mb-5">
 					Joining Room
 				</h1>
 				{errorMessage && <Error errorMessage={errorMessage} />}

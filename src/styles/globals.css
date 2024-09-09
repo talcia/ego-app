@@ -2,10 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-	background-color: #1b1717;
+input:-internal-autofill-selected,
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+	background-color: transparent !important;
 }
 
-.white-text {
-	color: #eeebdd;
+body {
+	height: 100vh;
+	background: rgb(82, 7, 7);
+	background: linear-gradient(
+		0deg,
+		rgba(82, 7, 7, 1) 0%,
+		rgba(17, 1, 1, 1) 45%
+	);
 }

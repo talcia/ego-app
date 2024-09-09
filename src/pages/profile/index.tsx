@@ -22,7 +22,7 @@ const Profile: React.FC = () => {
 		<>
 			<Logo />
 			<div className="flex flex-col">
-				<p className="white-text text-center mb-10">
+				<p className="text-customWhite text-center mb-10">
 					{user?.displayName || user?.email}
 				</p>
 				<Button onClick={handleCreateRoom}>Create room</Button>

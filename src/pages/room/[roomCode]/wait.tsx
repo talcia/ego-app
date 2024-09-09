@@ -44,16 +44,16 @@ const WaitPage = () => {
 
 	return (
 		<div className="flex flex-col items-center w-60">
-			<p className="block text-sm mb-2 white-text">
+			<p className="block text-sm mb-2 text-customWhite">
 				Waiting for the admins permission to join the room
 			</p>
 			<br />
-			<p className="block text-sm mb-2 white-text">
+			<p className="block text-sm mb-2 text-customWhite">
 				{router.query.roomCode}
 			</p>
 			<br />
 			<div
-				className="mb-10 inline-block white-text h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
+				className="mb-10 inline-block text-customWhite h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
 				role="status"
 			></div>
 			<Button onClick={handleCancel}>Cancel</Button>

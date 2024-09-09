@@ -52,16 +52,18 @@ const WaitingList: React.FC = () => {
 
 	return (
 		<div className="flex flex-col">
-			<h1 className="white-text text-center text-2xl mb-5">
+			<h1 className="text-customWhite text-center text-2xl mb-5">
 				{router.query.roomCode}
 			</h1>
 
-			<p className="white-text  text-xl mb-5">Waiting List</p>
+			<p className="text-customWhite  text-xl mb-5">Waiting List</p>
 
 			<div>
 				{waitingList.length > 0 ? (
 					<>
-						<p className="white-text  text-xl mb-5">Players</p>
+						<p className="text-customWhite  text-xl mb-5">
+							Players
+						</p>
 						<PlayersList
 							players={waitingList}
 							isWaitingList={true}
@@ -70,7 +72,7 @@ const WaitingList: React.FC = () => {
 						/>
 					</>
 				) : (
-					<p className="white-text  text-sm mb-5">
+					<p className="text-customWhite  text-sm mb-5">
 						no users waiting to be added
 					</p>
 				)}

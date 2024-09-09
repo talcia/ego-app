@@ -35,7 +35,7 @@ const PlayerList: React.FC<PlayerListProps> = ({
 								? 'text-[gold]'
 								: player.isReady
 								? 'text-[green]'
-								: 'white-text'
+								: 'text-customWhite'
 						}`}
 					>
 						{player.name}

@@ -46,7 +46,7 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
 				isReadyForNextRound: true,
 			},
 		});
-	}, [isEliminated, roomCode, roundNumber]);
+	}, [roomCode, roundNumber]);
 
 	const onClickReady = () => {
 		setIsReady((prev) => !prev);
@@ -55,12 +55,12 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
 			roundNumber: roundNumber as string,
 			playerData: {
 				isEliminated,
-				isReady,
+				isReady: !isReady,
+				id: user?.uid,
+				isReadyForNextRound: false,
+				answer: selectedAnswer,
 				...(!isEliminated && {
-					answer: selectedAnswer,
 					coin: selectedCoins,
-					id: user?.uid,
-					isReadyForNextRound: false,
 				}),
 			},
 			userId: questionAboutPlayer.id,
@@ -73,14 +73,16 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
 				<PlayersAvatarList players={playersAnswers} />
 			</div>
 			<div>
-				<p className="white-text mb-4 text-center">Question about</p>
+				<p className="text-customWhite mb-4 text-center">
+					Question about
+				</p>
 				<PlayerAvatar
 					name={questionAboutPlayer.name}
 					photoUrl={questionAboutPlayer.avatar}
 				/>
 			</div>
 			<div className="py-5">
-				<p className="white-text my-3">{question}</p>
+				<p className="text-customWhite my-3">{question}</p>
 				<AnswersList
 					answers={answers}
 					selectedAnswer={selectedAnswer}
@@ -99,7 +101,7 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
 							playerCoin={points}
 						/>
 					</div>
-					<p className="white-text text-center mt-3">
+					<p className="text-customWhite text-center mt-3">
 						You have {points} coins
 					</p>
 				</div>

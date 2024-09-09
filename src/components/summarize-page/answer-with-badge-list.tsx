@@ -27,7 +27,11 @@ const AnswersList: React.FC<AnswersListProps> = ({
 			{answers.map((answer) => (
 				<li key={answer.id} className="relative">
 					<Button
-						variant={correctAnswer === answer.id ? 'red' : 'white'}
+						variant={
+							correctAnswer === answer.id
+								? 'customRed'
+								: 'customWhite'
+						}
 						font="normal"
 					>
 						{answer.label}

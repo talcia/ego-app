@@ -1,9 +1,8 @@
 import BronzeMedal from '../medals/bronze-medal';
 import GoldMedal from '../medals/gold-medal';
 import SilverMedal from '../medals/silver-medal';
-import ActionButtons from './action-buttons';
 
-interface Player {
+export interface Player {
 	id: string;
 	name: string;
 	avatar: string;
@@ -18,7 +17,6 @@ interface PlayerListProps {
 
 const PlayerResults: React.FC<PlayerListProps> = ({ players }) => {
 	const sortedPlayers = players.sort((a, b) => b.points - a.points);
-
 	return (
 		<ul className="my-5">
 			{sortedPlayers.map((player, index) => (
@@ -30,13 +28,13 @@ const PlayerResults: React.FC<PlayerListProps> = ({ players }) => {
 					{index + 1 === 2 && <SilverMedal />}
 					{index + 1 === 3 && <BronzeMedal />}
 					{index + 1 > 3 && (
-						<p className="font-bold white-text w-[40px] text-center">
+						<p className="font-bold text-customWhite w-[40px] text-center">
 							{index + 1}.
 						</p>
 					)}
 					<div className="flex items-center gap-2">
 						<p className="rounded-full size-10 bg-white"></p>
-						<p className="h-fit white-text">{player.name}</p>
+						<p className="h-fit text-customWhite">{player.name}</p>
 					</div>
 					<p className="font-bold text-white">
 						{player.points} points
