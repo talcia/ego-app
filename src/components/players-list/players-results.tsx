@@ -1,6 +1,7 @@
 import BronzeMedal from '../medals/bronze-medal';
 import GoldMedal from '../medals/gold-medal';
 import SilverMedal from '../medals/silver-medal';
+import PlayerAvatar from '../question-page/player-avatar';
 
 export interface Player {
 	id: string;
@@ -33,7 +34,7 @@ const PlayerResults: React.FC<PlayerListProps> = ({ players }) => {
 						</p>
 					)}
 					<div className="flex items-center gap-2">
-						<p className="rounded-full size-10 bg-white"></p>
+						<PlayerAvatar playerId={player.id} />
 						<p className="h-fit text-customWhite">{player.name}</p>
 					</div>
 					<p className="font-bold text-white">

@@ -143,7 +143,8 @@ const RoundSummarizePage = () => {
 				</p>
 				<PlayerAvatar
 					name={roundData?.questionAboutPlayer.name}
-					photoUrl={roundData?.questionAboutPlayer.avatar}
+					playerId={roundData?.questionAboutPlayer.id}
+					size={150}
 				/>
 			</div>
 			<div className="py-5">

@@ -19,6 +19,9 @@ const nextConfig = {
 		return config;
 	},
 	reactStrictMode: true,
+	images: {
+		domains: ['firebasestorage.googleapis.com'],
+	},
 };
 
 export default nextConfig;

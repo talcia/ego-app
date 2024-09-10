@@ -1,5 +1,6 @@
 import { auth } from '@/utils/db/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
+import PlayerAvatar from '../question-page/player-avatar';
 
 interface Player {
 	id: string;
@@ -20,11 +21,13 @@ const PlayersAvatarList: React.FC<PlayersAvatarListProps> = ({ players }) => {
 		<ul className="flex justify-center">
 			{updatedPlayers.map((player) => (
 				<li key={player.id}>
-					<p
-						className={`rounded-full size-10 bg-white ${
+					<PlayerAvatar
+						size={40}
+						className={
 							player.isReady ? 'border-4 border-green-600' : ''
-						}`}
-					></p>
+						}
+						playerId={player.id}
+					/>
 				</li>
 			))}
 		</ul>

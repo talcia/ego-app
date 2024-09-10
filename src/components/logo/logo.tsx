@@ -5,7 +5,11 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 
 const zhiMangXing = Zhi_Mang_Xing({ weight: '400', subsets: ['latin'] });
 
-const Logo: React.FC = () => {
+interface LogoProps {
+	variant?: 'normal' | 'small';
+}
+
+const Logo: React.FC<LogoProps> = ({ variant = 'normal' }) => {
 	const [user] = useAuthState(auth);
 	const router = useRouter();
 
@@ -17,9 +21,14 @@ const Logo: React.FC = () => {
 		}
 	};
 
+	const style = {
+		small: 'text-5xl mb-4',
+		normal: 'text-9xl my-10 text-center',
+	};
+
 	return (
 		<p
-			className={`${zhiMangXing.className} text-9xl text-customRed my-10 cursor-pointer text-center`}
+			className={`${zhiMangXing.className} text-customRed  cursor-pointer ${style[variant]}`}
 			onClick={handleLogoClick}
 		>
 			ego

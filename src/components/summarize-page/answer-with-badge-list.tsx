@@ -1,4 +1,5 @@
 import Button from '../button/button';
+import PlayerAvatar from '../question-page/player-avatar';
 
 export interface Answer {
 	id: string;
@@ -40,14 +41,11 @@ const AnswersList: React.FC<AnswersListProps> = ({
 						{playersAnswers?.map(
 							(player) =>
 								player.answer === answer.id && (
-									<p
+									<PlayerAvatar
 										key={player.id}
-										className="rounded-full size-10 bg-white mx-1 relative"
-									>
-										<p className="rounded-full size-5 bg-white mx-1 absolute top-[-6px] right-[-10px] flex justify-center items-center">
-											{player.coin}
-										</p>
-									</p>
+										playerId={player.id}
+										playerCoin={player.coin}
+									/>
 								)
 						)}
 					</div>

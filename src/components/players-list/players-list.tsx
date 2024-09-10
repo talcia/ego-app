@@ -1,3 +1,4 @@
+import PlayerAvatar from '../question-page/player-avatar';
 import ActionButtons from './action-buttons';
 
 interface Player {
@@ -28,7 +29,11 @@ const PlayerList: React.FC<PlayerListProps> = ({
 					key={player.id}
 					className="flex flex-row my-2 items-center border-b-2 border-gray-500 pb-2"
 				>
-					<p className="rounded-full size-10 bg-white mr-3"></p>
+					<PlayerAvatar
+						size={40}
+						playerId={player.id}
+						className="mr-2"
+					/>
 					<p
 						className={`h-fit ${
 							player.admin

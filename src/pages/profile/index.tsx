@@ -1,35 +1,38 @@
 import Button from '@/components/button/button';
-import Logo from '@/components/logo/logo';
 import useAuth from '@/hooks/use-auth';
 import { auth } from '@/utils/db/firebase';
-import { useRouter } from 'next/router';
 import { useAuthState } from 'react-firebase-hooks/auth';
+import Link from 'next/link';
+import PlayerAvatar from '@/components/question-page/player-avatar';
+import ProfileLayout from './layout';
+import { NextPageWithLayout } from '../_app';
 
-const Profile: React.FC = () => {
+const Profile: NextPageWithLayout = () => {
 	useAuth();
-	const router = useRouter();
 	const [user] = useAuthState(auth);
 
-	const handleCreateRoom = () => {
-		router.push('/room/create');
-	};
-
-	const handleJoinRoom = () => {
-		router.push('/room/join');
-	};
-
 	return (
-		<>
-			<Logo />
-			<div className="flex flex-col">
-				<p className="text-customWhite text-center mb-10">
+		<div className="flex flex-col ">
+			<div className="my-3">
+				<PlayerAvatar name="" size={150} playerId={user?.uid!} />
+			</div>
+			<div className="flex justify-center items-center my-5">
+				<p className="text-customWhite text-center ">
 					{user?.displayName || user?.email}
 				</p>
-				<Button onClick={handleCreateRoom}>Create room</Button>
-				<Button onClick={handleJoinRoom}>Join room</Button>
 			</div>
-		</>
+			<Link href="/room/create">
+				<Button>Create room</Button>
+			</Link>
+			<Link href="/room/join">
+				<Button>Join room</Button>
+			</Link>
+		</div>
 	);
 };
+
+Profile.getLayout = (page: React.ReactElement) => (
+	<ProfileLayout>{page}</ProfileLayout>
+);
 
 export default Profile;

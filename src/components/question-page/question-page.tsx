@@ -69,16 +69,17 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
 
 	return (
 		<div>
-			<div>
+			{/* <div>
 				<PlayersAvatarList players={playersAnswers} />
-			</div>
+			</div> */}
 			<div>
 				<p className="text-customWhite mb-4 text-center">
 					Question about
 				</p>
 				<PlayerAvatar
 					name={questionAboutPlayer.name}
-					photoUrl={questionAboutPlayer.avatar}
+					playerId={questionAboutPlayer.id}
+					size={150}
 				/>
 			</div>
 			<div className="py-5">
