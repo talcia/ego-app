@@ -19,7 +19,6 @@ const Profile: NextPageWithLayout = () => {
 	const [userName, setUserName] = useState('');
 	const [file, setFile] = useState<File>();
 	const [fileURL, setFileURL] = useState('');
-	const inputRef = useRef<HTMLInputElement>(null);
 	const router = useRouter();
 
 	useEffect(() => {
@@ -96,7 +95,7 @@ const Profile: NextPageWithLayout = () => {
 			</div>
 			<div className="flex justify-center items-center my-4">
 				<Input
-					ref={inputRef}
+					label="Name"
 					value={userName}
 					onChange={({ target: { value } }) => setUserName(value)}
 				/>
