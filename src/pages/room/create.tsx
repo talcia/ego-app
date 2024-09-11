@@ -12,11 +12,11 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 
 const CreateRoom: React.FC = () => {
 	const router = useRouter();
-	const { numberOfRounds, setNumberOfRounds } = useContext(RoundContext);
+	const { numberOfRounds, setNumberOfRounds, maxRounds, setMaxRounds } =
+		useContext(RoundContext);
 	const [initialPoints, setInitialPoints] = useState(10);
 	const [roomCode, setRoomCode] = useState('');
 	const [errorMessage, setErrorMessage] = useState('');
-	const [maxRounds, setMaxRounds] = useState(0);
 	const [user] = useAuthState(auth);
 	const { setIsAdmin } = useContext(AdminContext);
 
@@ -27,7 +27,7 @@ const CreateRoom: React.FC = () => {
 			setMaxRounds(questions.docs.length);
 		};
 		getNumberOfQuestions();
-	}, []);
+	}, [setMaxRounds]);
 
 	const handleCreateRoom = async () => {
 		const response = await fetch('/api/room', {

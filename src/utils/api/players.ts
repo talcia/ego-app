@@ -1,4 +1,4 @@
-import { doc, getDoc } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
 import { db } from '../db/firebase';
 
 export const updatePlayer = async (
@@ -8,13 +8,8 @@ export const updatePlayer = async (
 	value: any
 ) => {
 	const playerCollection = doc(db, 'rooms', roomCode, 'players', playerId);
-	const playerDoc = await getDoc(playerCollection);
 
-	if (!playerDoc.exists()) {
-		return;
-	}
-
-	const playerData = playerDoc.data();
+	const playerData = await getPlayerData(roomCode, playerId);
 
 	const updatedPlayer = { ...playerData, [key]: value };
 
@@ -30,4 +25,20 @@ export const getPlayerData = async (roomCode: string, playerId: string) => {
 	}
 
 	return playerDoc.data();
+};
+
+export const getPlayers = async (roomCode: string) => {
+	const playersCollection = collection(
+		db,
+		'rooms',
+		roomCode as string,
+		'players'
+	);
+	const playersData = await getDocs(playersCollection);
+	const players = playersData.docs.map((doc: any) => ({
+		id: doc.id,
+		...doc.data(),
+	}));
+
+	return players;
 };

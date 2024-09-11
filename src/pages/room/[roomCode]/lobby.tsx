@@ -1,5 +1,6 @@
 import Button from '@/components/button/button';
 import PlayersList from '@/components/players-list/players-list';
+import { NextPageWithLayout } from '@/pages/_app';
 import PlayerContext from '@/store/player-context';
 import RoundContext from '@/store/round-context';
 import { auth, db } from '@/utils/db/firebase';
@@ -8,8 +9,11 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useContext, useEffect, useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
+import Logo from '@/components/logo/logo';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowLeft, faGear } from '@fortawesome/free-solid-svg-icons';
 
-const RoomLobby: React.FC = () => {
+const RoomLobby: NextPageWithLayout = () => {
 	const router = useRouter();
 	const {
 		query: { roomCode },
@@ -108,9 +112,26 @@ const RoomLobby: React.FC = () => {
 		fetch(`/api/room/${roomCode}/start`, { method: 'POST' });
 	};
 
+	const onGearIconClick = () => {
+		router.push(`/room/${roomCode}/settings`);
+	};
+
 	return (
 		<div className="flex flex-col">
-			<h1 className="text-customWhite text-center text-2xl mb-5">
+			<div className="w-full flex gap-20 items-center justify-between  text-customWhite my-3">
+				<FontAwesomeIcon
+					icon={faArrowLeft}
+					// onClick={onBackIconClick}
+					className="cursor-pointer"
+				/>
+				<Logo variant="small" />
+				<FontAwesomeIcon
+					icon={faGear}
+					onClick={onGearIconClick}
+					className="cursor-pointer"
+				/>
+			</div>
+			<h1 className="text-customWhite text-center text-2xl mb-6">
 				{roomCode}
 			</h1>
 			{isAdmin && (

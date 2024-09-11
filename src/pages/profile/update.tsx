@@ -4,7 +4,7 @@ import useAuth from '@/hooks/use-auth';
 import { auth } from '@/utils/db/firebase';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { updateProfile } from 'firebase/auth';
+import { reload, updateProfile } from 'firebase/auth';
 import PlayerAvatar from '@/components/question-page/player-avatar';
 import ProfileLayout from './layout';
 import { NextPageWithLayout } from '../_app';
@@ -31,6 +31,13 @@ const Profile: NextPageWithLayout = () => {
 
 	const onSaveClick = async () => {
 		if (!file || !user) {
+			if (userName !== user?.displayName) {
+				await updateProfile(user!, {
+					displayName: userName,
+				});
+				setUserName('');
+				router.replace('/profile');
+			}
 			return;
 		}
 
@@ -44,9 +51,10 @@ const Profile: NextPageWithLayout = () => {
 		});
 
 		if (response.status === 200) {
-			updateProfile(user!, {
+			await updateProfile(user!, {
 				displayName: userName,
 			});
+			setUserName('');
 			router.replace('/profile');
 		}
 	};

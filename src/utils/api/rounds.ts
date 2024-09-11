@@ -58,7 +58,7 @@ export const pushPlayerAnswer = async ({
 	playerData,
 	userId,
 }: PushPlayerAnswerProps) => {
-	fetch(`/api/room/${roomCode}/round/${roundNumber}`, {
+	await fetch(`/api/room/${roomCode}/round/${roundNumber}`, {
 		method: 'POST',
 		body: JSON.stringify({
 			playerData: {
@@ -96,4 +96,12 @@ export const getPlayersArray = async (roomRef: DocumentReference) => {
 	}));
 
 	return players;
+};
+
+export const getRoundData = async (roomCode: string, roundNumber: string) => {
+	const roundCollection = doc(db, 'rooms', roomCode, 'rounds', roundNumber);
+
+	const roundDoc = await getDoc(roundCollection);
+	const roundData = roundDoc.data() || {};
+	return roundData;
 };
