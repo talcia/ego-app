@@ -1,3 +1,7 @@
+import PlayerAvatar from '@/components/question-page/player-avatar';
+import { getPlayerData, getPlayers } from '@/utils/api/players';
+import { getRoomData } from '@/utils/api/rooms';
+import { getRoundData } from '@/utils/api/rounds';
 import { db } from '@/utils/db/firebase';
 import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
 import { GetServerSideProps } from 'next';
@@ -46,6 +50,7 @@ const PlayerEliminatedPage: React.FC<PlayerEliminatedPageProps> = ({
 
 	return (
 		<div className="text-customWhite">
+			<PlayerAvatar playerId={eliminatedPlayers[index].id} />
 			{eliminatedPlayers[index].name} was eliminated
 		</div>
 	);
@@ -55,44 +60,23 @@ export default PlayerEliminatedPage;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
 	const { roundNumber, roomCode } = context.params!;
-	const roundCollection = doc(
-		db,
-		'rooms',
+
+	const roundData = await getRoundData(
 		roomCode as string,
-		'rounds',
 		roundNumber as string
 	);
-
-	const roundRef = await getDoc(roundCollection);
-	const roundData = roundRef.data();
 
 	const eliminatedPlayers = roundData?.eliminatedPlayers;
 	const eliminatedPlayersArray: any[] = [];
 	for (let player of eliminatedPlayers) {
-		const playerCollection = doc(
-			db,
-			'rooms',
-			roomCode as string,
-			'players',
-			player
-		);
-		const playerRef = await getDoc(playerCollection);
-		const { id, name, avatar } = playerRef.data() || {};
+		const { id, name, avatar } =
+			(await getPlayerData(roomCode as string, player)) || {};
 		eliminatedPlayersArray.push({ id, name, avatar });
 	}
 
-	const roomCollection = doc(db, 'rooms', roomCode as string);
-	const room = await getDoc(roomCollection);
-	const roomData = room.data();
+	const roomData = await getRoomData(roomCode as string);
 
-	const playersCollection = collection(
-		db,
-		'rooms',
-		roomCode as string,
-		'players'
-	);
-	const playersData = await getDocs(playersCollection);
-	const players = playersData.docs;
+	const players = await getPlayers(roomCode as string);
 
 	const isLastRound = roomData?.numberOfRounds === Number(roundNumber);
 	const isEndGame = roomData?.eliminatedPlayers.length === players.length - 1;

@@ -1,6 +1,8 @@
-import Button from '@/components/button/button';
+import Logo from '@/components/logo/logo';
 import PlayersList from '@/components/players-list/players-list';
 import { db } from '@/utils/db/firebase';
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -51,19 +53,22 @@ const WaitingList: React.FC = () => {
 	};
 
 	return (
-		<div className="flex flex-col">
-			<h1 className="text-customWhite text-center text-2xl mb-5">
-				{router.query.roomCode}
-			</h1>
-
-			<p className="text-customWhite  text-xl mb-5">Waiting List</p>
+		<div className="flex flex-col  min-w-[250px]">
+			<div className="w-full flex gap-20 items-center justify-between  text-customWhite my-3">
+				<FontAwesomeIcon
+					icon={faArrowLeft}
+					onClick={onBackClick}
+					className="cursor-pointer"
+				/>
+				<Logo variant="small" />
+			</div>
+			<p className="text-customWhite text-center text-xl mb-5">
+				Waiting List
+			</p>
 
 			<div>
 				{waitingList.length > 0 ? (
 					<>
-						<p className="text-customWhite  text-xl mb-5">
-							Players
-						</p>
 						<PlayersList
 							players={waitingList}
 							isWaitingList={true}
@@ -73,12 +78,10 @@ const WaitingList: React.FC = () => {
 					</>
 				) : (
 					<p className="text-customWhite  text-sm mb-5">
-						no users waiting to be added
+						No pending users to be added.
 					</p>
 				)}
 			</div>
-
-			<Button onClick={onBackClick}>Back</Button>
 		</div>
 	);
 };

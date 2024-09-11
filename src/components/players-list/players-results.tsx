@@ -34,7 +34,7 @@ const PlayerResults: React.FC<PlayerListProps> = ({ players }) => {
 						</p>
 					)}
 					<div className="flex items-center gap-2">
-						<PlayerAvatar playerId={player.id} />
+						<PlayerAvatar playerId={player.id} size={60} />
 						<p className="h-fit text-customWhite">{player.name}</p>
 					</div>
 					<p className="font-bold text-white">

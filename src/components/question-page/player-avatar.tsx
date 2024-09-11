@@ -14,6 +14,7 @@ const PlayerAvatar: React.FC<PlayerAvatar> = ({
 	name,
 	size = 150,
 	playerCoin,
+	className,
 }) => {
 	const [photoUrl, setPhotoUrl] = useState('');
 
@@ -27,13 +28,9 @@ const PlayerAvatar: React.FC<PlayerAvatar> = ({
 		getPhoto();
 	});
 
-	if (!photoUrl) {
-		return;
-	}
-
 	return (
 		<>
-			<div className="flex justify-center">
+			<div className={`flex justify-center ${className} h-[${size}px]`}>
 				<div
 					className={`relative rounded-full overflow-hidden`}
 					style={{ width: size, height: size }}

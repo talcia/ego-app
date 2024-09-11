@@ -91,7 +91,10 @@ const Profile: NextPageWithLayout = () => {
 					className="absolute bottom-[-20px] right-[-20px] text-customWhite bg-customBlack p-2 rounded-xl border cursor-pointer"
 				>
 					Edit
-					<FontAwesomeIcon icon={faEdit} className="ml-2" />
+					<FontAwesomeIcon
+						icon={faEdit}
+						className="ml-2 cursor-pointer"
+					/>
 				</label>
 				<input
 					type="file"

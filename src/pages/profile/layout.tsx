@@ -21,7 +21,11 @@ const ProfileLayout: React.FC<LayoutProps> = ({ children }) => {
 		<div className="w-[240px]">
 			<div className="w-full flex items-center justify-between  text-customWhite">
 				<Logo variant="small" />
-				<FontAwesomeIcon icon={faGear} onClick={gearIconClick} />
+				<FontAwesomeIcon
+					icon={faGear}
+					onClick={gearIconClick}
+					className="cursor-pointer"
+				/>
 			</div>
 			{children}
 		</div>

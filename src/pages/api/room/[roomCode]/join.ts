@@ -16,7 +16,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 		}
 
 		const { roomRef, room } = resposne;
-		const initialPoints = room.data().initialPoints;
+		const { initialPoints, owner } = room.data() || {};
 
 		try {
 			const playersCollection = collection(roomRef, 'players');
@@ -24,10 +24,17 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 			await setDoc(playerRef, {
 				...user,
 				points: initialPoints,
-				admin: false,
-				status: 'pending',
+				...(owner === user.id
+					? {
+							admin: true,
+							status: 'accepted',
+					  }
+					: { admin: false, status: 'pending' }),
 			});
-			res.status(201).json({ message: 'User added' });
+			res.status(201).json({
+				message: 'User added',
+				...(owner === user.id && { isAdmin: true }),
+			});
 		} catch (e) {
 			res.status(500).json({ message: 'Something went wrong' });
 		}

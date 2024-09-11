@@ -2,8 +2,7 @@ import Button from '@/components/button/button';
 import PlayersResults, {
 	Player,
 } from '@/components/players-list/players-results';
-import { db } from '@/utils/db/firebase';
-import { collection, getDocs } from 'firebase/firestore';
+import { getPlayers } from '@/utils/api/players';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 
@@ -27,7 +26,7 @@ const FinishPage: React.FC<FinishPageProps> = ({ players }) => {
 	};
 
 	return (
-		<div className="flex flex-col">
+		<div className="flex flex-col my-3">
 			<h1 className="text-customWhite text-center text-2xl mb-5">
 				Results
 			</h1>
@@ -45,18 +44,7 @@ export default FinishPage;
 export const getServerSideProps: GetServerSideProps = async (context) => {
 	const { roomCode } = context.params!;
 
-	const playersCollection = collection(
-		db,
-		'rooms',
-		roomCode as string,
-		'players'
-	);
-	const playersDocs = await getDocs(playersCollection);
-
-	const players = playersDocs.docs.map((doc: any) => ({
-		id: doc.id,
-		...doc.data(),
-	}));
+	const players = await getPlayers(roomCode as string);
 
 	return {
 		props: {

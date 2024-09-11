@@ -12,7 +12,7 @@ const Button: React.FC<ButtonProps> = ({
 	<button
 		className={`bg-${variant} text-${
 			variant === 'customRed' ? 'customWhite' : 'customBlack'
-		} bg-customRed py-4 px-6 my-2 font-${font} rounded-3xl min-w-40 w-full disabled:bg-gray-400 disabled:cursor-not-allowed `}
+		} bg-customRed py-4 px-6 my-2 font-${font} rounded-3xl min-w-40 w-full disabled:bg-gray-400 disabled:cursor-not-allowed shadow-md shadow-customBlack`}
 		{...props}
 	>
 		{children}

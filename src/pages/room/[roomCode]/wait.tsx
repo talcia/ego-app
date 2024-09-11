@@ -1,4 +1,5 @@
 import Button from '@/components/button/button';
+import Logo from '@/components/logo/logo';
 import { auth, db } from '@/utils/db/firebase';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { useRouter } from 'next/router';
@@ -44,8 +45,11 @@ const WaitPage = () => {
 
 	return (
 		<div className="flex flex-col items-center w-60">
-			<p className="block text-sm mb-2 text-customWhite">
-				Waiting for the admins permission to join the room
+			<div className="w-full flex gap-20 items-center justify-center  text-customWhite my-3">
+				<Logo variant="small" clickable={false} />
+			</div>
+			<p className="block text-sm mb-2 text-customWhite text-center">
+				{"Waiting for the admin's approval to enter the room"}
 			</p>
 			<br />
 			<p className="block text-sm mb-2 text-customWhite">

@@ -116,33 +116,48 @@ const RoomLobby: NextPageWithLayout = () => {
 		router.push(`/room/${roomCode}/settings`);
 	};
 
+	const onBackIconClick = () => {
+		fetch(`/api/room/${router.query.roomCode}/player/${user?.uid}`, {
+			method: 'DELETE',
+		});
+		router.replace('/room/join');
+	};
+
 	return (
-		<div className="flex flex-col">
+		<div className="flex flex-col min-w-[250px]">
 			<div className="w-full flex gap-20 items-center justify-between  text-customWhite my-3">
 				<FontAwesomeIcon
 					icon={faArrowLeft}
-					// onClick={onBackIconClick}
+					onClick={onBackIconClick}
 					className="cursor-pointer"
 				/>
-				<Logo variant="small" />
-				<FontAwesomeIcon
-					icon={faGear}
-					onClick={onGearIconClick}
-					className="cursor-pointer"
-				/>
+				<Logo variant="small" clickable={false} />
+				{isAdmin && (
+					<FontAwesomeIcon
+						icon={faGear}
+						onClick={onGearIconClick}
+						className="cursor-pointer"
+					/>
+				)}
 			</div>
 			<h1 className="text-customWhite text-center text-2xl mb-6">
 				{roomCode}
 			</h1>
 			{isAdmin && (
 				<Link href={`/room/${roomCode}/waiting-list`}>
-					<p className="text-customWhite  text-xl mb-5">
+					<p
+						className={`${
+							waitingList.length
+								? 'text-customYellow'
+								: 'text-customWhite'
+						} text-xl mb-5`}
+					>
 						Waiting List {waitingList.length}
 					</p>
 				</Link>
 			)}
-			<div>
-				<p className="text-customWhite  text-xl mb-5">Players</p>
+			<div className="my-8">
+				<p className="text-customWhite text-center text-xl ">Players</p>
 				<PlayersList players={players} isWaitingList={false} />
 			</div>
 			{isReady ? (

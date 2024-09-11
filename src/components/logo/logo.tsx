@@ -7,9 +7,13 @@ const zhiMangXing = Zhi_Mang_Xing({ weight: '400', subsets: ['latin'] });
 
 interface LogoProps {
 	variant?: 'normal' | 'small';
+	clickable?: boolean;
 }
 
-const Logo: React.FC<LogoProps> = ({ variant = 'normal' }) => {
+const Logo: React.FC<LogoProps> = ({
+	variant = 'normal',
+	clickable = true,
+}) => {
 	const [user] = useAuthState(auth);
 	const router = useRouter();
 
@@ -28,8 +32,10 @@ const Logo: React.FC<LogoProps> = ({ variant = 'normal' }) => {
 
 	return (
 		<p
-			className={`${zhiMangXing.className} text-customRed  cursor-pointer ${style[variant]}`}
-			onClick={handleLogoClick}
+			className={`${zhiMangXing.className} text-customRed ${
+				clickable && 'cursor-pointer'
+			} ${style[variant]}`}
+			onClick={clickable ? handleLogoClick : undefined}
 		>
 			ego
 		</p>

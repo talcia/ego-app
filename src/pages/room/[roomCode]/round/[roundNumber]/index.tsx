@@ -3,7 +3,7 @@ import QuestionPage, {
 	QuestionPageProps,
 } from '@/components/question-page/question-page';
 import PlayerContext from '@/store/player-context';
-import { pushPlayerAnswer } from '@/utils/api/rounds';
+import { getRoundData, pushPlayerAnswer } from '@/utils/api/rounds';
 import { auth, db } from '@/utils/db/firebase';
 import { doc, getDoc, onSnapshot } from 'firebase/firestore';
 import { GetServerSideProps } from 'next';
@@ -106,17 +106,12 @@ export default RoundPage;
 export const getServerSideProps: GetServerSideProps = async (context) => {
 	const { roundNumber, roomCode } = context.params!;
 
-	const roundCollection = doc(
-		db,
-		'rooms',
+	const roundData = await getRoundData(
 		roomCode as string,
-		'rounds',
 		roundNumber as string
 	);
-
-	const roundDoc = await getDoc(roundCollection);
 	const { question, answers, questionAboutPlayer, playersAnswers } =
-		roundDoc.data() || {};
+		roundData;
 
 	return {
 		props: {

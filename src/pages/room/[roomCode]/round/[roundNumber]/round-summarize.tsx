@@ -145,6 +145,7 @@ const RoundSummarizePage = () => {
 					name={roundData?.questionAboutPlayer.name}
 					playerId={roundData?.questionAboutPlayer.id}
 					size={150}
+					className="flex-col items-center"
 				/>
 			</div>
 			<div className="py-5">
@@ -165,21 +166,12 @@ const RoundSummarizePage = () => {
 				/>
 			)}
 			<div>
-				{Number(roundNumber) === numberOfRounds ? (
-					<Button
-						onClick={handleOnReadyClick}
-						variant={isUserReady ? 'customWhite' : 'customRed'}
-					>
-						{isUserReady ? 'Not ready' : 'See Results'}
-					</Button>
-				) : (
-					<Button
-						onClick={handleOnReadyClick}
-						variant={isUserReady ? 'customWhite' : 'customRed'}
-					>
-						{isUserReady ? 'Not ready' : 'Next'}
-					</Button>
-				)}
+				<Button
+					onClick={handleOnReadyClick}
+					variant={isUserReady ? 'customWhite' : 'customRed'}
+				>
+					{isUserReady ? 'Not ready' : 'Next'}
+				</Button>
 			</div>
 		</>
 	);

@@ -3,15 +3,17 @@ import Input from '@/components/input/input';
 import Error from '@/components/error/error';
 import Logo from '@/components/logo/logo';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '@/utils/db/firebase';
+import PlayerContext from '@/store/player-context';
 
 const JoinRoom: React.FC = () => {
 	const [roomCode, setRoomCode] = useState('');
 	const [errorMessage, setErrorMessage] = useState('');
 	const router = useRouter();
 	const [user] = useAuthState(auth);
+	const { setIsAdmin } = useContext(PlayerContext);
 
 	const handleClick = async () => {
 		const response = await fetch(`/api/room/${roomCode}/join`, {
@@ -30,6 +32,10 @@ const JoinRoom: React.FC = () => {
 			},
 		});
 		if (response.status === 201) {
+			const data = await response.json();
+			if (data.isAdmin) {
+				setIsAdmin(true);
+			}
 			router.push(`/room/${roomCode}/wait`);
 		} else if (response.status === 400) {
 			const responseMessage = await response.json();

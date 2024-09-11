@@ -45,6 +45,7 @@ const AnswersList: React.FC<AnswersListProps> = ({
 										key={player.id}
 										playerId={player.id}
 										playerCoin={player.coin}
+										size={50}
 									/>
 								)
 						)}

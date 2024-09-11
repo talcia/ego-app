@@ -80,6 +80,7 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
 					name={questionAboutPlayer.name}
 					playerId={questionAboutPlayer.id}
 					size={150}
+					className="flex-col items-center"
 				/>
 			</div>
 			<div className="py-5">

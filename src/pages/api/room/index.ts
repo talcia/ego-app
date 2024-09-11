@@ -32,7 +32,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 				});
 				const playersCollection = collection(roomRef, 'players');
 				const userRef = doc(playersCollection, user.id);
-				await setDoc(userRef, { ...user, points: initialPoints });
+				await setDoc(userRef, {
+					...user,
+					points: initialPoints,
+					isReady: false,
+				});
 				res.status(201).json({ message: 'Room created' });
 			} catch (e) {
 				res.status(500).json({ message: 'Something went wrong' });

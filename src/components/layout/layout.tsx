@@ -4,7 +4,7 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
 	return (
-		<div className={`container flex flex-col items-center mx-auto h-full `}>
+		<div className={`container flex flex-col items-center mx-auto h-full`}>
 			{children}
 		</div>
 	);
