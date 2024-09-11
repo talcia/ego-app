@@ -15,8 +15,10 @@ const SignUpPage = () => {
 	const [checkError, setCheckError] = useState(false);
 	const [errorMessage, setErrorMessage] = useState('');
 	const router = useRouter();
+	const [isLoading, setIsLoading] = useState(false);
 
 	const handleSubmit = async () => {
+		setIsLoading(true);
 		!checkError && setCheckError(true);
 		if (
 			email.includes('@') &&
@@ -33,6 +35,7 @@ const SignUpPage = () => {
 				setErrorMessage('An error occurred. Please try again.');
 			}
 		}
+		setIsLoading(false);
 	};
 
 	return (
@@ -65,7 +68,9 @@ const SignUpPage = () => {
 					isInvalid={checkError && password !== confirmPassword}
 					errorMessage="Password not match"
 				/>
-				<Button onClick={handleSubmit}>Sign Up</Button>
+				<Button onClick={handleSubmit} isLoading={isLoading}>
+					Sign Up
+				</Button>
 			</div>
 		</>
 	);

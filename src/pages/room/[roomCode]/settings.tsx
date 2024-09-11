@@ -27,6 +27,7 @@ const RoomSettings: NextPageWithLayout<{
 	const { setNumberOfRounds, maxRounds } = useContext(RoundContext);
 	const [points, setPoints] = useState(initialPoints);
 	const [rounds, setRounds] = useState(numberOfRounds);
+	const [isLoading, setIsLoading] = useState(false);
 
 	if (!isAdmin) {
 		router.replace('/');
@@ -38,6 +39,7 @@ const RoomSettings: NextPageWithLayout<{
 	};
 
 	const onSaveClick = async () => {
+		setIsLoading(true);
 		const response = await fetch(`/api/room/${roomCode}`, {
 			method: 'POST',
 			body: JSON.stringify({
@@ -53,6 +55,7 @@ const RoomSettings: NextPageWithLayout<{
 			setNumberOfRounds(rounds);
 			router.replace(`/room/${roomCode}/lobby`);
 		}
+		setIsLoading(false);
 	};
 
 	return (
@@ -82,7 +85,9 @@ const RoomSettings: NextPageWithLayout<{
 				max={10}
 				onChange={({ target: { value } }) => setPoints(+value)}
 			/>
-			<Button onClick={onSaveClick}>Save settings</Button>
+			<Button onClick={onSaveClick} isLoading={isLoading}>
+				Save settings
+			</Button>
 		</div>
 	);
 };

@@ -5,6 +5,7 @@ import PlayersResults, {
 import { getPlayers } from '@/utils/api/players';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
+import { useState } from 'react';
 
 interface FinishPageProps {
 	players: Player[];
@@ -15,14 +16,17 @@ const FinishPage: React.FC<FinishPageProps> = ({ players }) => {
 	const {
 		query: { roomCode },
 	} = router;
+	const [isLoading, setIsLoading] = useState(false);
 
 	const onBackToLobbyClick = async () => {
+		setIsLoading(true);
 		const response = await fetch(`/api/room/${roomCode}/lobby`, {
 			method: 'POST',
 		});
 		if (response.status === 200) {
 			router.replace(`/room/${roomCode}/lobby`);
 		}
+		setIsLoading(false);
 	};
 
 	return (
@@ -34,7 +38,9 @@ const FinishPage: React.FC<FinishPageProps> = ({ players }) => {
 				<PlayersResults players={players} />
 			</div>
 
-			<Button onClick={onBackToLobbyClick}>Back to Lobby</Button>
+			<Button onClick={onBackToLobbyClick} isLoading={isLoading}>
+				Back to Lobby
+			</Button>
 		</div>
 	);
 };

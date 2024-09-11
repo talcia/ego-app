@@ -1,15 +1,17 @@
 import Button from '@/components/button/button';
 import Logo from '@/components/logo/logo';
+import Spinner from '@/components/spinner/spinner';
 import { auth, db } from '@/utils/db/firebase';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 
 const WaitPage = () => {
 	const router = useRouter();
 	const { roomCode } = router.query;
 	const [user] = useAuthState(auth);
+	const [isLoading, setIsLoading] = useState(false);
 
 	useEffect(() => {
 		if (!roomCode || Array.isArray(roomCode)) {
@@ -36,11 +38,13 @@ const WaitPage = () => {
 		return () => unsubscribe();
 	}, [roomCode, router, user?.uid]);
 
-	const handleCancel = () => {
-		fetch(`/api/room/${router.query.roomCode}/player/${user?.uid}`, {
+	const handleCancel = async () => {
+		setIsLoading(true);
+		await fetch(`/api/room/${router.query.roomCode}/player/${user?.uid}`, {
 			method: 'DELETE',
 		});
 		router.back();
+		setIsLoading(false);
 	};
 
 	return (
@@ -48,19 +52,18 @@ const WaitPage = () => {
 			<div className="w-full flex gap-20 items-center justify-center  text-customWhite my-3">
 				<Logo variant="small" clickable={false} />
 			</div>
-			<p className="block text-sm mb-2 text-customWhite text-center">
+			<p className="block text-sm mb-10 text-customWhite text-center">
 				{"Waiting for the admin's approval to enter the room"}
 			</p>
-			<br />
-			<p className="block text-sm mb-2 text-customWhite">
+			<p className="block text-sm mb-6 text-customWhite">
 				{router.query.roomCode}
 			</p>
-			<br />
-			<div
-				className="mb-10 inline-block text-customWhite h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
-				role="status"
-			></div>
-			<Button onClick={handleCancel}>Cancel</Button>
+			<div className="mb-8">
+				<Spinner />
+			</div>
+			<Button onClick={handleCancel} isLoading={isLoading}>
+				Cancel
+			</Button>
 		</div>
 	);
 };

@@ -15,14 +15,17 @@ const LoginPage = () => {
 	const [password, setPassword] = useState('');
 	const [errorMessage, setErrorMessage] = useState('');
 	const router = useRouter();
+	const [isLoading, setIsLoading] = useState(false);
 
 	const handleLogin = async () => {
+		setIsLoading(true);
 		try {
 			await signInWithEmailAndPassword(auth, login, password);
 			router.push('/profile');
 		} catch (e) {
 			setErrorMessage('An error occured. Please try again');
 		}
+		setIsLoading(false);
 	};
 
 	return (
@@ -41,7 +44,9 @@ const LoginPage = () => {
 					value={password}
 					onChange={({ target: { value } }) => setPassword(value)}
 				/>
-				<Button onClick={handleLogin}>Login</Button>
+				<Button onClick={handleLogin} isLoading={isLoading}>
+					Login
+				</Button>
 				<p className="block text-sm mb-2 text-customWhite self-center">
 					<Link href="/auth/reset-password">forget password?</Link>
 				</p>

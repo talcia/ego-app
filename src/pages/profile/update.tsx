@@ -20,6 +20,7 @@ const Profile: NextPageWithLayout = () => {
 	const [file, setFile] = useState<File>();
 	const [fileURL, setFileURL] = useState('');
 	const router = useRouter();
+	const [isLoading, setIsLoading] = useState(false);
 
 	useEffect(() => {
 		if (user && user.displayName) {
@@ -30,6 +31,7 @@ const Profile: NextPageWithLayout = () => {
 	}, [user]);
 
 	const onSaveClick = async () => {
+		setIsLoading(true);
 		if (!file || !user) {
 			if (userName !== user?.displayName) {
 				await updateProfile(user!, {
@@ -38,6 +40,7 @@ const Profile: NextPageWithLayout = () => {
 				setUserName('');
 				router.replace('/profile');
 			}
+			setIsLoading(false);
 			return;
 		}
 
@@ -57,6 +60,7 @@ const Profile: NextPageWithLayout = () => {
 			setUserName('');
 			router.replace('/profile');
 		}
+		setIsLoading(false);
 	};
 
 	const onFileUpload = ({
@@ -111,7 +115,9 @@ const Profile: NextPageWithLayout = () => {
 					onChange={({ target: { value } }) => setUserName(value)}
 				/>
 			</div>
-			<Button onClick={onSaveClick}>Save</Button>
+			<Button onClick={onSaveClick} isLoading={isLoading}>
+				Save
+			</Button>
 		</div>
 	);
 };

@@ -22,11 +22,13 @@ const Input: React.FC<InputProps> = ({
 				id={label}
 				{...props}
 				className={`shadow appearance-none bg-transparent border rounded-3xl w-full py-4 px-6 text-customWhite leading-tight focus:outline-none focus:shadow-outline ${
-					isInvalid && 'border-red-500 text-red-600'
+					isInvalid && 'border-customYellow text-customYellow'
 				}`}
 			/>
 			{isInvalid && errorMessage && (
-				<p className="block text-sm text-red-600">{errorMessage}</p>
+				<p className="block text-sm text-customYellow">
+					{errorMessage}
+				</p>
 			)}
 		</div>
 	);

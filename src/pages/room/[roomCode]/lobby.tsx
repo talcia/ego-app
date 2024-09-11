@@ -25,6 +25,7 @@ const RoomLobby: NextPageWithLayout = () => {
 	const [user] = useAuthState(auth);
 	const [isReady, setIsReady] = useState(false);
 	const { setNumberOfRounds } = useContext(RoundContext);
+	const [isLoading, setIsLoading] = useState(false);
 
 	useEffect(() => {
 		if (!roomCode || Array.isArray(roomCode)) {
@@ -108,16 +109,18 @@ const RoomLobby: NextPageWithLayout = () => {
 		setIsReady(false);
 	};
 
-	const onStartClick = () => {
-		fetch(`/api/room/${roomCode}/start`, { method: 'POST' });
+	const onStartClick = async () => {
+		setIsLoading(true);
+		await fetch(`/api/room/${roomCode}/start`, { method: 'POST' });
+		setIsLoading(false);
 	};
 
 	const onGearIconClick = () => {
 		router.push(`/room/${roomCode}/settings`);
 	};
 
-	const onBackIconClick = () => {
-		fetch(`/api/room/${router.query.roomCode}/player/${user?.uid}`, {
+	const onBackIconClick = async () => {
+		await fetch(`/api/room/${router.query.roomCode}/player/${user?.uid}`, {
 			method: 'DELETE',
 		});
 		router.replace('/room/join');
@@ -171,6 +174,7 @@ const RoomLobby: NextPageWithLayout = () => {
 						!isReady || players.some((player) => !player.isReady)
 					}
 					onClick={onStartClick}
+					isLoading={isLoading}
 				>
 					Start
 				</Button>

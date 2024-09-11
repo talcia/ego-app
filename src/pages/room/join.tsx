@@ -14,8 +14,10 @@ const JoinRoom: React.FC = () => {
 	const router = useRouter();
 	const [user] = useAuthState(auth);
 	const { setIsAdmin } = useContext(PlayerContext);
+	const [isLoading, setIsLoading] = useState(false);
 
 	const handleClick = async () => {
+		setIsLoading(true);
 		const response = await fetch(`/api/room/${roomCode}/join`, {
 			method: 'POST',
 			body: JSON.stringify({
@@ -35,12 +37,15 @@ const JoinRoom: React.FC = () => {
 			const data = await response.json();
 			if (data.isAdmin) {
 				setIsAdmin(true);
+				router.push(`/room/${roomCode}/lobby`);
+			} else {
+				router.push(`/room/${roomCode}/wait`);
 			}
-			router.push(`/room/${roomCode}/wait`);
 		} else if (response.status === 400) {
 			const responseMessage = await response.json();
 			setErrorMessage(responseMessage.message);
 		}
+		setIsLoading(false);
 	};
 
 	return (
@@ -56,7 +61,9 @@ const JoinRoom: React.FC = () => {
 					value={roomCode}
 					onChange={(event) => setRoomCode(event.target.value)}
 				/>
-				<Button onClick={handleClick}>Join</Button>
+				<Button onClick={handleClick} isLoading={isLoading}>
+					Join
+				</Button>
 			</div>
 		</>
 	);

@@ -19,6 +19,7 @@ const CreateRoom: React.FC = () => {
 	const [errorMessage, setErrorMessage] = useState('');
 	const [user] = useAuthState(auth);
 	const { setIsAdmin } = useContext(AdminContext);
+	const [isLoading, setIsLoading] = useState(false);
 
 	useEffect(() => {
 		const getNumberOfQuestions = async () => {
@@ -30,6 +31,7 @@ const CreateRoom: React.FC = () => {
 	}, [setMaxRounds]);
 
 	const handleCreateRoom = async () => {
+		setIsLoading(true);
 		const response = await fetch('/api/room', {
 			method: 'POST',
 			body: JSON.stringify({
@@ -56,6 +58,7 @@ const CreateRoom: React.FC = () => {
 			const responseMessage = await response.json();
 			setErrorMessage(responseMessage.message);
 		}
+		setIsLoading(false);
 	};
 
 	return (
@@ -84,7 +87,9 @@ const CreateRoom: React.FC = () => {
 				max={10}
 				onChange={({ target: { value } }) => setInitialPoints(+value)}
 			/>
-			<Button onClick={handleCreateRoom}>Create room</Button>
+			<Button onClick={handleCreateRoom} isLoading={isLoading}>
+				Create room
+			</Button>
 		</div>
 	);
 };

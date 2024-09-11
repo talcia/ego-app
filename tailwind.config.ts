@@ -17,6 +17,7 @@ const config: Config = {
 				customWhite: '#eeebdd',
 				customBlack: '#1b1717',
 				customRed: 'rgba(82, 7, 7, 1)',
+				customYellow: '#FFD700',
 			},
 		},
 	},
