@@ -3,17 +3,23 @@ import PlayersList from '@/components/players-list/players-list';
 import { NextPageWithLayout } from '@/pages/_app';
 import PlayerContext from '@/store/player-context';
 import RoundContext from '@/store/round-context';
-import { auth, db } from '@/utils/db/firebase';
+import { db } from '@/utils/db/firebase';
 import { collection, doc, onSnapshot } from 'firebase/firestore';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useContext, useEffect, useState } from 'react';
-import { useAuthState } from 'react-firebase-hooks/auth';
 import Logo from '@/components/logo/logo';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faGear } from '@fortawesome/free-solid-svg-icons';
+import { User } from '@/pages/profile';
+import { getSessionUser } from '@/utils/auth/server-auth';
+import { GetServerSideProps } from 'next';
 
-const RoomLobby: NextPageWithLayout = () => {
+interface RoomLobbyProps {
+	user: User;
+}
+
+const RoomLobby: NextPageWithLayout<RoomLobbyProps> = ({ user }) => {
 	const router = useRouter();
 	const {
 		query: { roomCode },
@@ -22,7 +28,6 @@ const RoomLobby: NextPageWithLayout = () => {
 	const [waitingList, setWaitingList] = useState<any[]>([]);
 	const { isAdmin, setIsAdmin, setPoints, setIsEliminated } =
 		useContext(PlayerContext);
-	const [user] = useAuthState(auth);
 	const [isReady, setIsReady] = useState(false);
 	const { setNumberOfRounds } = useContext(RoundContext);
 	const [isLoading, setIsLoading] = useState(false);
@@ -38,7 +43,7 @@ const RoomLobby: NextPageWithLayout = () => {
 			if (docSnap.exists()) {
 				const { status, numberOfRounds, owner, initialPoints } =
 					docSnap.data();
-				if (owner === user?.uid) {
+				if (owner === user.id) {
 					setIsAdmin(true);
 				}
 				setNumberOfRounds(numberOfRounds);
@@ -58,7 +63,7 @@ const RoomLobby: NextPageWithLayout = () => {
 		setIsEliminated,
 		setNumberOfRounds,
 		setPoints,
-		user?.uid,
+		user.id,
 	]);
 
 	useEffect(() => {
@@ -88,7 +93,7 @@ const RoomLobby: NextPageWithLayout = () => {
 	}, [roomCode, router]);
 
 	const onClickReady = async () => {
-		fetch(`/api/room/${roomCode}/player/${user?.uid}`, {
+		fetch(`/api/room/${roomCode}/player/${user.id}`, {
 			method: 'PATCH',
 			body: JSON.stringify({ key: 'isReady', value: true }),
 			headers: {
@@ -99,7 +104,7 @@ const RoomLobby: NextPageWithLayout = () => {
 	};
 
 	const onNotClickReady = async () => {
-		fetch(`/api/room/${roomCode}/player/${user?.uid}`, {
+		fetch(`/api/room/${roomCode}/player/${user.id}`, {
 			method: 'PATCH',
 			body: JSON.stringify({ key: 'isReady', value: false }),
 			headers: {
@@ -120,7 +125,7 @@ const RoomLobby: NextPageWithLayout = () => {
 	};
 
 	const onBackIconClick = async () => {
-		await fetch(`/api/room/${router.query.roomCode}/player/${user?.uid}`, {
+		await fetch(`/api/room/${router.query.roomCode}/player/${user.id}`, {
 			method: 'DELETE',
 		});
 		router.replace('/room/join');
@@ -181,6 +186,10 @@ const RoomLobby: NextPageWithLayout = () => {
 			)}
 		</div>
 	);
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+	return getSessionUser(context);
 };
 
 export default RoomLobby;

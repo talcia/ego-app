@@ -1,16 +1,22 @@
 import Button from '@/components/button/button';
 import Logo from '@/components/logo/logo';
 import Spinner from '@/components/spinner/spinner';
-import { auth, db } from '@/utils/db/firebase';
+import { User } from '@/pages/profile';
+import { getSessionUser } from '@/utils/auth/server-auth';
+
+import { db } from '@/utils/db/firebase';
 import { collection, onSnapshot } from 'firebase/firestore';
+import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { useAuthState } from 'react-firebase-hooks/auth';
 
-const WaitPage = () => {
+interface WaitPageProps {
+	user: User;
+}
+
+const WaitPage: React.FC<WaitPageProps> = ({ user }) => {
 	const router = useRouter();
 	const { roomCode } = router.query;
-	const [user] = useAuthState(auth);
 	const [isLoading, setIsLoading] = useState(false);
 
 	useEffect(() => {
@@ -24,9 +30,7 @@ const WaitPage = () => {
 				id: doc.id,
 				...doc.data(),
 			}));
-			const player = players.find(
-				(player: any) => player.id === user?.uid
-			);
+			const player = players.find((player: any) => player.id === user.id);
 			if (!player) {
 				router.back();
 			}
@@ -36,11 +40,11 @@ const WaitPage = () => {
 		});
 
 		return () => unsubscribe();
-	}, [roomCode, router, user?.uid]);
+	}, [roomCode, router, user.id]);
 
 	const handleCancel = async () => {
 		setIsLoading(true);
-		await fetch(`/api/room/${router.query.roomCode}/player/${user?.uid}`, {
+		await fetch(`/api/room/${router.query.roomCode}/player/${user.id}`, {
 			method: 'DELETE',
 		});
 		router.back();
@@ -66,6 +70,10 @@ const WaitPage = () => {
 			</Button>
 		</div>
 	);
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+	return getSessionUser(context);
 };
 
 export default WaitPage;

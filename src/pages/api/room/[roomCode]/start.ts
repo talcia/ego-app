@@ -61,7 +61,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 					questionAboutPlayer: {
 						name: players[playerIndex].name,
 						id: players[playerIndex].id,
-						avatar: players[playerIndex].avatar,
 					},
 					correctAnswer: '',
 					eliminatedPlayers: [],

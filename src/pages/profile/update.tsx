@@ -1,10 +1,9 @@
 import Button from '@/components/button/button';
 import Input from '@/components/input/input';
-import useAuth from '@/hooks/use-auth';
 import { auth } from '@/utils/db/firebase';
-import { ChangeEvent, useEffect, useRef, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { reload, updateProfile } from 'firebase/auth';
+import { updateProfile } from 'firebase/auth';
 import PlayerAvatar from '@/components/question-page/player-avatar';
 import ProfileLayout from './layout';
 import { NextPageWithLayout } from '../_app';
@@ -12,31 +11,39 @@ import Image from 'next/image';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit } from '@fortawesome/free-solid-svg-icons';
 import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 
 const Profile: NextPageWithLayout = () => {
-	useAuth();
-	const [user] = useAuthState(auth);
 	const [userName, setUserName] = useState('');
 	const [file, setFile] = useState<File>();
 	const [fileURL, setFileURL] = useState('');
 	const router = useRouter();
 	const [isLoading, setIsLoading] = useState(false);
+	const [authUser] = useAuthState(auth);
+	const session = useSession();
+	const { data } = session;
 
 	useEffect(() => {
-		if (user && user.displayName) {
-			setUserName(user.displayName);
+		if (!data) {
+			return;
+		}
+		const { user } = data;
+		if (user && user.name) {
+			setUserName(user.name);
 		} else if (user && user.email) {
 			setUserName(user.email);
 		}
-	}, [user]);
+	}, [data]);
 
 	const onSaveClick = async () => {
 		setIsLoading(true);
-		if (!file || !user) {
-			if (userName !== user?.displayName) {
-				await updateProfile(user!, {
+		if (!file) {
+			if (data && auth.currentUser && userName !== data.user.name) {
+				await updateProfile(auth.currentUser!, {
 					displayName: userName,
 				});
+				session.data.user.name = userName;
+
 				setUserName('');
 				router.replace('/profile');
 			}
@@ -46,17 +53,18 @@ const Profile: NextPageWithLayout = () => {
 
 		const formData = new FormData();
 		formData.append('file', file);
-		formData.append('fileId', user.uid);
+		formData.append('fileId', data?.user.id!);
 
 		const response = await fetch('/api/storage', {
 			method: 'POST',
 			body: formData,
 		});
 
-		if (response.status === 200) {
-			await updateProfile(user!, {
+		if (data && authUser && response.status === 200) {
+			await updateProfile(authUser, {
 				displayName: userName,
 			});
+			session.data.user.name = userName;
 			setUserName('');
 			router.replace('/profile');
 		}
@@ -73,10 +81,6 @@ const Profile: NextPageWithLayout = () => {
 		}
 	};
 
-	if (!user) {
-		return;
-	}
-
 	return (
 		<div className="flex flex-col">
 			<div className="relative my-3 w-[150px] h-[150px] m-auto">
@@ -88,7 +92,7 @@ const Profile: NextPageWithLayout = () => {
 						layout="fill"
 					/>
 				) : (
-					<PlayerAvatar size={150} playerId={user.uid} />
+					<PlayerAvatar size={150} playerId={data?.user.id!} />
 				)}
 				<label
 					htmlFor="file-upload"

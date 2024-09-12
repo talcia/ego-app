@@ -1,8 +1,7 @@
+import { User } from '@/pages/profile';
 import PlayerContext from '@/store/player-context';
-import { auth } from '@/utils/db/firebase';
 import { useRouter } from 'next/router';
 import { useContext, useEffect, useState } from 'react';
-import { useAuthState } from 'react-firebase-hooks/auth';
 
 interface PointsResultProps {
 	correctAnswer: string;
@@ -10,11 +9,13 @@ interface PointsResultProps {
 		answer: string;
 		coin: number;
 	};
+	user: User;
 }
 
 const PointsResult: React.FC<PointsResultProps> = ({
 	correctAnswer,
 	userAnswer: { coin, answer },
+	user,
 }) => {
 	const { points, setPoints, setIsEliminated, isEliminated } =
 		useContext(PlayerContext);
@@ -23,7 +24,6 @@ const PointsResult: React.FC<PointsResultProps> = ({
 		query: { roomCode, roundNumber },
 	} = useRouter();
 	const isUserAnswerCorrect = correctAnswer === answer;
-	const [user] = useAuthState(auth);
 
 	useEffect(() => {
 		if (isUserAnswerCorrect) {
@@ -39,14 +39,14 @@ const PointsResult: React.FC<PointsResultProps> = ({
 			setIsEliminated(true);
 			fetch(`/api/room/${roomCode}/round/${roundNumber}/eliminate`, {
 				method: 'POST',
-				body: JSON.stringify({ userId: user?.uid }),
+				body: JSON.stringify({ userId: user.id }),
 				headers: {
 					'Content-Type': 'application/json',
 				},
 			});
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [points, roomCode, roundNumber, setIsEliminated, user?.uid]);
+	}, [points, roomCode, roundNumber, setIsEliminated, user.id]);
 
 	return (
 		<>

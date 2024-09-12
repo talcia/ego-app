@@ -4,31 +4,32 @@ import Input from '@/components/input/input';
 import Logo from '@/components/logo/logo';
 import AdminContext from '@/store/player-context';
 import RoundContext from '@/store/round-context';
-import { auth, db } from '@/utils/db/firebase';
+import { getSessionUser } from '@/utils/auth/server-auth';
+import { db } from '@/utils/db/firebase';
 import { collection, getDocs } from 'firebase/firestore';
+import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { useContext, useEffect, useState } from 'react';
-import { useAuthState } from 'react-firebase-hooks/auth';
+import { User } from '../profile';
 
-const CreateRoom: React.FC = () => {
+interface CreateRoomProps {
+	user: User;
+	questionsLength: number;
+}
+
+const CreateRoom: React.FC<CreateRoomProps> = ({ user, questionsLength }) => {
 	const router = useRouter();
 	const { numberOfRounds, setNumberOfRounds, maxRounds, setMaxRounds } =
 		useContext(RoundContext);
 	const [initialPoints, setInitialPoints] = useState(10);
 	const [roomCode, setRoomCode] = useState('');
 	const [errorMessage, setErrorMessage] = useState('');
-	const [user] = useAuthState(auth);
 	const { setIsAdmin } = useContext(AdminContext);
 	const [isLoading, setIsLoading] = useState(false);
 
 	useEffect(() => {
-		const getNumberOfQuestions = async () => {
-			const questionRef = collection(db, 'questions');
-			const questions = await getDocs(questionRef);
-			setMaxRounds(questions.docs.length);
-		};
-		getNumberOfQuestions();
-	}, [setMaxRounds]);
+		setMaxRounds(questionsLength);
+	}, [questionsLength, setMaxRounds]);
 
 	const handleCreateRoom = async () => {
 		setIsLoading(true);
@@ -37,10 +38,9 @@ const CreateRoom: React.FC = () => {
 			body: JSON.stringify({
 				roomCode,
 				user: {
-					name: user?.displayName || user?.email,
-					avatar: user?.photoURL,
+					name: user.name || user.email,
 					admin: true,
-					id: user?.uid,
+					id: user.id,
 					isReady: true,
 					status: 'accepted',
 				},
@@ -92,6 +92,24 @@ const CreateRoom: React.FC = () => {
 			</Button>
 		</div>
 	);
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+	const session = await getSessionUser(context);
+
+	if (session.redirect) {
+		return session;
+	}
+
+	const questionRef = collection(db, 'questions');
+	const questions = await getDocs(questionRef);
+
+	return {
+		props: {
+			user: session.props.user,
+			questionsLength: questions.docs.length,
+		},
+	};
 };
 
 export default CreateRoom;

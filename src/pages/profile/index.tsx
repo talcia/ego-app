@@ -1,24 +1,33 @@
 import Button from '@/components/button/button';
-import useAuth from '@/hooks/use-auth';
-import { auth } from '@/utils/db/firebase';
-import { useAuthState } from 'react-firebase-hooks/auth';
 import Link from 'next/link';
 import PlayerAvatar from '@/components/question-page/player-avatar';
 import ProfileLayout from './layout';
 import { NextPageWithLayout } from '../_app';
+import { useSession } from 'next-auth/react';
+
+export interface User {
+	name: string;
+	id: string;
+	email: string;
+}
 
 const Profile: NextPageWithLayout = () => {
-	useAuth();
-	const [user] = useAuthState(auth);
+	const { data } = useSession();
+
+	if (!data?.user) {
+		return;
+	}
+
+	const { user } = data;
 
 	return (
 		<div className="flex flex-col ">
 			<div className="my-3">
-				<PlayerAvatar name="" size={150} playerId={user?.uid!} />
+				<PlayerAvatar name="" size={150} playerId={user.id!} />
 			</div>
 			<div className="flex justify-center items-center my-5">
 				<p className="text-customWhite text-center ">
-					{user?.displayName || user?.email}
+					{user.name || user.email}
 				</p>
 			</div>
 			<Link href="/room/create">

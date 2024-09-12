@@ -3,12 +3,11 @@ import AnswersList, { Answer } from './answers-list';
 import PlayerAvatar from './player-avatar';
 import Coin from './coin';
 import Button from '../button/button';
-import { auth } from '@/utils/db/firebase';
-import { useAuthState } from 'react-firebase-hooks/auth';
 import PlayersAvatarList from '../players-list/players-list-avatars';
 import { pushPlayerAnswer } from '@/utils/api/rounds';
 import router from 'next/router';
 import PlayerContext from '@/store/player-context';
+import { User } from '@/pages/profile';
 
 export interface QuestionPageProps {
 	question: string;
@@ -19,6 +18,7 @@ export interface QuestionPageProps {
 		avatar: string;
 	};
 	playersAnswers: { id: string; avatar: string; isReady: boolean }[];
+	user: User;
 }
 
 const QuestionPage: React.FC<QuestionPageProps> = ({
@@ -26,6 +26,7 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
 	answers,
 	questionAboutPlayer,
 	playersAnswers,
+	user,
 }) => {
 	const [selectedCoins, setSelectedCoins] = useState(0);
 	const [selectedAnswer, setSelectedAnswer] = useState('');
@@ -35,8 +36,6 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
 	const {
 		query: { roundNumber, roomCode },
 	} = router;
-
-	const [user] = useAuthState(auth);
 
 	useEffect(() => {
 		pushPlayerAnswer({
@@ -56,7 +55,7 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
 			playerData: {
 				isEliminated,
 				isReady: !isReady,
-				id: user?.uid,
+				id: user.id,
 				isReadyForNextRound: false,
 				answer: selectedAnswer,
 				...(!isEliminated && {
@@ -70,7 +69,7 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
 	return (
 		<div>
 			{/* <div>
-				<PlayersAvatarList players={playersAnswers} />
+				<PlayersAvatarList players={playersAnswers} user={user}/>
 			</div> */}
 			<div>
 				<p className="text-customWhite mb-4 text-center">
@@ -91,7 +90,7 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
 					setSelectedAnswer={setSelectedAnswer}
 				/>
 			</div>
-			{questionAboutPlayer.id !== user?.uid && !isEliminated && (
+			{questionAboutPlayer.id !== user.id && !isEliminated && (
 				<div className="mt-3">
 					<div className="flex justify-around">
 						<Coin
@@ -108,12 +107,11 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
 					</p>
 				</div>
 			)}
-			{(!isEliminated || questionAboutPlayer.id === user?.uid) && (
+			{(!isEliminated || questionAboutPlayer.id === user.id) && (
 				<Button
 					disabled={
 						!(
-							questionAboutPlayer.id === user?.uid &&
-							selectedAnswer
+							questionAboutPlayer.id === user.id && selectedAnswer
 						) &&
 						(!selectedAnswer || !selectedCoins)
 					}

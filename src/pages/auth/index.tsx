@@ -4,11 +4,12 @@ import Input from '@/components/input/input';
 import FacebookLoginButton from '@/components/login-button/facebook-login-button';
 import GoogleLoginButton from '@/components/login-button/google-login-button';
 import Logo from '@/components/logo/logo';
-import { auth } from '@/utils/db/firebase';
-import { signInWithEmailAndPassword } from 'firebase/auth';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
+import { signIn } from 'next-auth/react';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '@/utils/db/firebase';
 
 const LoginPage = () => {
 	const [login, setLogin] = useState('');
@@ -21,6 +22,12 @@ const LoginPage = () => {
 		setIsLoading(true);
 		try {
 			await signInWithEmailAndPassword(auth, login, password);
+			signIn('credentials', {
+				email: login,
+				password,
+				redirect: true,
+				callbackUrl: '/profile',
+			});
 			router.push('/profile');
 		} catch (e) {
 			setErrorMessage('An error occured. Please try again');

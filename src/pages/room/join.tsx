@@ -4,15 +4,19 @@ import Error from '@/components/error/error';
 import Logo from '@/components/logo/logo';
 import { useRouter } from 'next/router';
 import { useContext, useState } from 'react';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import { auth } from '@/utils/db/firebase';
+import { User } from '../profile';
 import PlayerContext from '@/store/player-context';
+import { GetServerSideProps } from 'next';
+import { getSessionUser } from '@/utils/auth/server-auth';
 
-const JoinRoom: React.FC = () => {
+interface JoinRoomProps {
+	user: User;
+}
+
+const JoinRoom: React.FC<JoinRoomProps> = ({ user }) => {
 	const [roomCode, setRoomCode] = useState('');
 	const [errorMessage, setErrorMessage] = useState('');
 	const router = useRouter();
-	const [user] = useAuthState(auth);
 	const { setIsAdmin } = useContext(PlayerContext);
 	const [isLoading, setIsLoading] = useState(false);
 
@@ -22,9 +26,8 @@ const JoinRoom: React.FC = () => {
 			method: 'POST',
 			body: JSON.stringify({
 				user: {
-					name: user?.displayName || user?.email,
-					avatar: user?.photoURL,
-					id: user?.uid,
+					name: user.name || user.email,
+					id: user.id,
 					isReady: false,
 					status: 'pending',
 				},
@@ -67,6 +70,10 @@ const JoinRoom: React.FC = () => {
 			</div>
 		</>
 	);
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+	return getSessionUser(context);
 };
 
 export default JoinRoom;

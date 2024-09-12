@@ -58,15 +58,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 				const storageRef = ref(storage, `images/${fileId}`);
 
 				const fileBuffer = await fs.promises.readFile(file.filepath);
-				const { metadata } = await uploadBytes(storageRef, fileBuffer, {
+				await uploadBytes(storageRef, fileBuffer, {
 					contentType: file.mimetype || undefined,
 				});
 
-				const fileURL = `https://storage.googleapis.com/${metadata.bucket}/${metadata.fullPath}`;
-
 				return res
 					.status(200)
-					.json({ message: 'Uploaded Successfully', fileURL });
+					.json({ message: 'Uploaded Successfully' });
 			} catch (e: any) {
 				console.error('Upload error:', e.message);
 				return res

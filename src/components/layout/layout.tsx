@@ -1,12 +1,18 @@
+import SessionProvider from '@/store/session-provider';
+
 interface LayoutProps {
 	children: React.ReactNode;
 }
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
 	return (
-		<div className={`container flex flex-col items-center mx-auto h-full`}>
-			{children}
-		</div>
+		<SessionProvider>
+			<div
+				className={`container flex flex-col items-center mx-auto h-full`}
+			>
+				{children}
+			</div>
+		</SessionProvider>
 	);
 };
 

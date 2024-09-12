@@ -2,8 +2,6 @@ import Button from '@/components/button/button';
 import { NextPageWithLayout } from '@/pages/_app';
 import PlayerContext from '@/store/player-context';
 import RoundContext from '@/store/round-context';
-import { db } from '@/utils/db/firebase';
-import { doc, getDoc } from 'firebase/firestore';
 
 import { useRouter } from 'next/router';
 import { useContext, useState } from 'react';
@@ -14,6 +12,7 @@ import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import Input from '@/components/input/input';
 import { GetServerSideProps } from 'next';
 import { getRoomData } from '@/utils/api/rooms';
+import { getSessionUser } from '@/utils/auth/server-auth';
 
 const RoomSettings: NextPageWithLayout<{
 	initialPoints: number;
@@ -23,16 +22,11 @@ const RoomSettings: NextPageWithLayout<{
 	const {
 		query: { roomCode },
 	} = router;
-	const { isAdmin, setPoints: setInitialPoints } = useContext(PlayerContext);
+	const { setPoints: setInitialPoints } = useContext(PlayerContext);
 	const { setNumberOfRounds, maxRounds } = useContext(RoundContext);
 	const [points, setPoints] = useState(initialPoints);
 	const [rounds, setRounds] = useState(numberOfRounds);
 	const [isLoading, setIsLoading] = useState(false);
-
-	if (!isAdmin) {
-		router.replace('/');
-		return;
-	}
 
 	const onBackIconClick = () => {
 		router.back();
@@ -95,11 +89,26 @@ const RoomSettings: NextPageWithLayout<{
 export default RoomSettings;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
+	const session = await getSessionUser(context);
+
+	if (session.redirect) {
+		return session;
+	}
+
 	const { roomCode } = context.params!;
 
 	const roomData = await getRoomData(roomCode as string);
 
-	const { initialPoints, numberOfRounds } = roomData || {};
+	const { initialPoints, numberOfRounds, owner } = roomData || {};
+
+	if (owner === session.props.user.id) {
+		return {
+			redirect: {
+				destination: `/room/${roomCode}/lobby`,
+				permanent: false,
+			},
+		};
+	}
 
 	return {
 		props: {

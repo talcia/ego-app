@@ -1,3 +1,5 @@
+import { storage } from '@/utils/db/firebase';
+import { getDownloadURL, ref } from 'firebase/storage';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
@@ -10,23 +12,22 @@ interface PlayerAvatar {
 }
 
 const PlayerAvatar: React.FC<PlayerAvatar> = ({
-	playerId,
 	name,
 	size = 150,
 	playerCoin,
 	className,
+	playerId,
 }) => {
-	const [photoUrl, setPhotoUrl] = useState('');
+	const [photoURL, setPhotoURL] = useState('');
 
 	useEffect(() => {
 		const getPhoto = async () => {
-			const res = await fetch(`/api/storage?fileId=${playerId}`);
-			const data = await res.json();
-			setPhotoUrl(data.downloadURL);
+			const fileRef = ref(storage, `images/${playerId}`);
+			const fileURL = await getDownloadURL(fileRef);
+			setPhotoURL(fileURL);
 		};
-
 		getPhoto();
-	});
+	}, [playerId]);
 
 	return (
 		<>
@@ -36,7 +37,7 @@ const PlayerAvatar: React.FC<PlayerAvatar> = ({
 					style={{ width: size, height: size }}
 				>
 					<Image
-						src={photoUrl}
+						src={photoURL}
 						alt="user image"
 						fill
 						className="object-cover"

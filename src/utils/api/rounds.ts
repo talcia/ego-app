@@ -92,7 +92,6 @@ export const getPlayersArray = async (roomRef: DocumentReference) => {
 	const players = playersSnapshot.docs.map((doc) => ({
 		id: doc.id,
 		name: doc.data().name,
-		avatar: doc.data().avatar,
 	}));
 
 	return players;

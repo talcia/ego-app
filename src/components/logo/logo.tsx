@@ -1,7 +1,5 @@
-import { auth } from '@/utils/db/firebase';
 import { Zhi_Mang_Xing } from 'next/font/google';
 import { useRouter } from 'next/router';
-import { useAuthState } from 'react-firebase-hooks/auth';
 
 const zhiMangXing = Zhi_Mang_Xing({ weight: '400', subsets: ['latin'] });
 
@@ -14,15 +12,10 @@ const Logo: React.FC<LogoProps> = ({
 	variant = 'normal',
 	clickable = true,
 }) => {
-	const [user] = useAuthState(auth);
 	const router = useRouter();
 
 	const handleLogoClick = () => {
-		if (!user) {
-			router.replace('/');
-		} else {
-			router.replace('/profile');
-		}
+		router.replace('/profile');
 	};
 
 	const style = {

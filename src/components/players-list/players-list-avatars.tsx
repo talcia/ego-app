@@ -1,5 +1,4 @@
-import { auth } from '@/utils/db/firebase';
-import { useAuthState } from 'react-firebase-hooks/auth';
+import { User } from '@/pages/profile';
 import PlayerAvatar from '../question-page/player-avatar';
 
 interface Player {
@@ -10,12 +9,14 @@ interface Player {
 
 interface PlayersAvatarListProps {
 	players: Player[];
+	user: User;
 }
 
-const PlayersAvatarList: React.FC<PlayersAvatarListProps> = ({ players }) => {
-	const [user] = useAuthState(auth);
-
-	const updatedPlayers = players.filter((player) => player.id !== user?.uid);
+const PlayersAvatarList: React.FC<PlayersAvatarListProps> = ({
+	players,
+	user,
+}) => {
+	const updatedPlayers = players.filter((player) => player.id !== user.id);
 
 	return (
 		<ul className="flex justify-center">

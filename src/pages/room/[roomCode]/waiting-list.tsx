@@ -1,9 +1,11 @@
 import Logo from '@/components/logo/logo';
 import PlayersList from '@/components/players-list/players-list';
+import { getSessionUser } from '@/utils/auth/server-auth';
 import { db } from '@/utils/db/firebase';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { collection, onSnapshot } from 'firebase/firestore';
+import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
@@ -84,6 +86,10 @@ const WaitingList: React.FC = () => {
 			</div>
 		</div>
 	);
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+	return getSessionUser(context);
 };
 
 export default WaitingList;
