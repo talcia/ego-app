@@ -22,9 +22,15 @@ const PlayerAvatar: React.FC<PlayerAvatar> = ({
 
 	useEffect(() => {
 		const getPhoto = async () => {
-			const fileRef = ref(storage, `images/${playerId}`);
-			const fileURL = await getDownloadURL(fileRef);
-			setPhotoURL(fileURL);
+			try {
+				const fileRef = ref(storage, `images/${playerId}`);
+				const fileURL = await getDownloadURL(fileRef);
+				setPhotoURL(fileURL);
+			} catch (e) {
+				const fileRef = ref(storage, `images/unknown.png`);
+				const fileURL = await getDownloadURL(fileRef);
+				setPhotoURL(fileURL);
+			}
 		};
 		getPhoto();
 	}, [playerId]);
