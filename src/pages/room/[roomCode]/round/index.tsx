@@ -22,7 +22,7 @@ const StartingPage = () => {
 		const unsubscribe = onSnapshot(roundCollection, (docSnap) => {
 			const rounds = docSnap.docs;
 			if (rounds.length) {
-				router.push(`/room/${roomCode}/round/${1}`);
+				router.replace(`/room/${roomCode}/round/${1}`);
 			}
 		});
 		return () => unsubscribe();

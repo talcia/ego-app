@@ -35,7 +35,7 @@ const WaitPage: React.FC<WaitPageProps> = ({ user }) => {
 				router.back();
 			}
 			if (player?.status === 'accepted') {
-				router.push(`/room/${roomCode}/lobby`);
+				router.replace(`/room/${roomCode}/lobby`);
 			}
 		});
 

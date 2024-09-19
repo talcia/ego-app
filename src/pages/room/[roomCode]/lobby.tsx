@@ -50,7 +50,9 @@ const RoomLobby: NextPageWithLayout<RoomLobbyProps> = ({ user }) => {
 				setPoints(initialPoints);
 				setIsEliminated(false);
 				if (status === 'started') {
-					router.push(`/room/${roomCode}/round`);
+					router.replace(`/room/${roomCode}/round`);
+				} else if (status === 'terminated') {
+					router.replace('/profile');
 				}
 			}
 		});
@@ -128,7 +130,7 @@ const RoomLobby: NextPageWithLayout<RoomLobbyProps> = ({ user }) => {
 		await fetch(`/api/room/${router.query.roomCode}/player/${user.id}`, {
 			method: 'DELETE',
 		});
-		router.replace('/room/join');
+		router.replace('/profile');
 	};
 
 	return (

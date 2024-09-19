@@ -65,7 +65,7 @@ const RoundPage: React.FC<QuestionPageProps & { user: User }> = ({
 			);
 
 			if (isEveryPlayerReady) {
-				router.push(
+				router.replace(
 					`/room/${roomCode}/round/${roundNumber}/round-summarize`
 				);
 			}

@@ -13,7 +13,6 @@ interface PlayerEliminatedPageProps {
 	eliminatedPlayers: {
 		id: string;
 		name: string;
-		avatar: string;
 	}[];
 }
 
@@ -69,9 +68,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 	const eliminatedPlayers = roundData?.eliminatedPlayers;
 	const eliminatedPlayersArray: any[] = [];
 	for (let player of eliminatedPlayers) {
-		const { id, name, avatar } =
+		const { id, name } =
 			(await getPlayerData(roomCode as string, player)) || {};
-		eliminatedPlayersArray.push({ id, name, avatar });
+		eliminatedPlayersArray.push({ id, name });
 	}
 
 	const roomData = await getRoomData(roomCode as string);

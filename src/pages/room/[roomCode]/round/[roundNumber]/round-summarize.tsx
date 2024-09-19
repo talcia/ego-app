@@ -92,7 +92,7 @@ const RoundSummarizePage: React.FC<RoundSummarizePageProps> = ({ user }) => {
 				}
 			);
 			if (response.status === 201) {
-				router.push(`/room/${roomCode}/round/finish`);
+				router.replace(`/room/${roomCode}/round/finish`);
 			}
 		};
 
@@ -104,11 +104,13 @@ const RoundSummarizePage: React.FC<RoundSummarizePageProps> = ({ user }) => {
 			return;
 		}
 		if (roundData?.eliminatedPlayers.length > 0) {
-			router.push(`/room/${roomCode}/round/${roundNumber}/eliminated`);
+			router.replace(`/room/${roomCode}/round/${roundNumber}/eliminated`);
 		} else if (Number(roundNumber) === numberOfRounds) {
 			finishGame();
 		} else {
-			router.push(`/room/${roomCode}/round/${Number(roundNumber) + 1}`);
+			router.replace(
+				`/room/${roomCode}/round/${Number(roundNumber) + 1}`
+			);
 		}
 	}, [
 		numberOfRounds,

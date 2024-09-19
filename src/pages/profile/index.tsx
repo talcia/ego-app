@@ -30,9 +30,11 @@ const Profile: NextPageWithLayout = () => {
 					{user.name || user.email}
 				</p>
 			</div>
-			<Link href="/room/create">
-				<Button>Create room</Button>
-			</Link>
+			{user.email && (
+				<Link href="/room/create">
+					<Button>Create room</Button>
+				</Link>
+			)}
 			<Link href="/room/join">
 				<Button>Join room</Button>
 			</Link>
