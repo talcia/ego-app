@@ -6,8 +6,8 @@ import GoogleLoginButton from '@/components/login-button/google-login-button';
 import Logo from '@/components/logo/logo';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
-import { signIn } from 'next-auth/react';
+import { useEffect, useState } from 'react';
+import { signIn, useSession } from 'next-auth/react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/utils/db/firebase';
 
@@ -17,6 +17,13 @@ const LoginPage = () => {
 	const [errorMessage, setErrorMessage] = useState('');
 	const router = useRouter();
 	const [isLoading, setIsLoading] = useState(false);
+	const session = useSession();
+
+	useEffect(() => {
+		if (session.status === 'authenticated') {
+			router.push('/profile');
+		}
+	}, [session]);
 
 	const handleLogin = async () => {
 		setIsLoading(true);
@@ -33,6 +40,14 @@ const LoginPage = () => {
 			setErrorMessage('An error occured. Please try again');
 		}
 		setIsLoading(false);
+	};
+
+	const onGoogleLoginButtonClick = async () => {
+		await signIn('google', { redirect: true, callbackUrl: '/profile' });
+	};
+
+	const onFacebookLoginButtonClick = async () => {
+		await signIn('facebook', { redirect: true, callbackUrl: '/profile' });
 	};
 
 	return (
@@ -59,8 +74,8 @@ const LoginPage = () => {
 				</p>
 			</div>
 			<div className="my-4 flex gap-10">
-				<GoogleLoginButton />
-				<FacebookLoginButton />
+				<GoogleLoginButton onClick={onGoogleLoginButtonClick} />
+				<FacebookLoginButton onClick={onFacebookLoginButtonClick} />
 			</div>
 			<div>
 				<p className="block text-sm mb-2 text-customWhite">

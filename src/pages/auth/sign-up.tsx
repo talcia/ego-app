@@ -1,4 +1,3 @@
-'use client';
 import Button from '@/components/button/button';
 import Error from '@/components/error/error';
 import Input from '@/components/input/input';
@@ -19,6 +18,7 @@ const SignUpPage = () => {
 
 	const handleSubmit = async () => {
 		setIsLoading(true);
+		setErrorMessage('');
 		!checkError && setCheckError(true);
 		if (
 			email.includes('@') &&

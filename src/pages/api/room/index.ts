@@ -1,10 +1,20 @@
 import { db } from '@/utils/db/firebase';
 import { collection, doc, getDoc, setDoc } from 'firebase/firestore';
 import { NextApiRequest, NextApiResponse } from 'next';
+import { getServerSession } from 'next-auth';
+import { getSession } from 'next-auth/react';
+import { authOptions } from '../auth/[...nextauth]';
 
 // api/room
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 	if (req.method === 'POST') {
+		const session = await getServerSession(req, res, authOptions);
+
+		if (!session) {
+			res.status(401).json({ message: 'Not autheticated' });
+			return;
+		}
+
 		const { roomCode, user, numberOfRounds, initialPoints } =
 			req.body as unknown as {
 				roomCode: string;
