@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import PlayerAvatar from '../question-page/player-avatar';
+import PlayerAvatar from '../player-avatar/player-avatar';
 import ActionButtons from './action-buttons';
 import { faCrown } from '@fortawesome/free-solid-svg-icons';
 import { PlayerInLobby } from '@/types/room-types';

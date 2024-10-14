@@ -8,10 +8,10 @@ const HomePage = () => {
 			<Logo />
 			<div className="flex flex-col items-center">
 				<Link href="/auth">
-					<Button variant="customWhite">Login</Button>
+					<Button>Login</Button>
 				</Link>
 				<Link href="/guest">
-					<Button variant="customWhite">Play as guest</Button>
+					<Button>Play as guest</Button>
 				</Link>
 			</div>
 		</>

@@ -176,7 +176,9 @@ const RoomLobby: NextPageWithLayout = () => {
 			{isAdmin && (
 				<Button
 					disabled={
-						!isReady || players.some((player) => !player.isReady)
+						!isReady ||
+						players.length < 2 ||
+						players.some((player) => !player.isReady)
 					}
 					onClick={onStartClick}
 					isLoading={isLoading}

@@ -1,5 +1,5 @@
 import { User } from '@/types/user-types';
-import PlayerAvatar from '../question-page/player-avatar';
+import PlayerAvatar from '../player-avatar/player-avatar';
 import { PlayerInLobby } from '@/types/room-types';
 interface PlayersAvatarListProps {
 	players: PlayerInLobby[];

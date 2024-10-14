@@ -1,6 +1,6 @@
 import { Answer, PlayerAnswer } from '@/types/round-types';
 import Button from '../button/button';
-import PlayerAvatar from '../question-page/player-avatar';
+import PlayerAvatar from '../player-avatar/player-avatar';
 
 interface AnswersListProps {
 	answers: Answer[];

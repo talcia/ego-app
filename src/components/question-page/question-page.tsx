@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import AnswersList from './answers-list';
-import PlayerAvatar from './player-avatar';
+import PlayerAvatar from '../player-avatar/player-avatar';
 import Coin from './coin';
 import Button from '../button/button';
 import { pushPlayerAnswer } from '@/utils/api/rounds';

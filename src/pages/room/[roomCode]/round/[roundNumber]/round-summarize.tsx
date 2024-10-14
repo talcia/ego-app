@@ -1,5 +1,5 @@
 import Button from '@/components/button/button';
-import PlayerAvatar from '@/components/question-page/player-avatar';
+import PlayerAvatar from '@/components/player-avatar/player-avatar';
 import AnswerWithBadgeList from '@/components/summarize-page/answer-with-badge-list';
 import PointsResult from '@/components/summarize-page/points-results';
 import { useUserSession } from '@/hooks/useUserSession';

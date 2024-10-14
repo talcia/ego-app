@@ -1,4 +1,4 @@
-import PlayerAvatar from '@/components/question-page/player-avatar';
+import PlayerAvatar from '@/components/player-avatar/player-avatar';
 import { EliminatedPlayer } from '@/types/round-types';
 import { getPlayerData, getPlayers } from '@/utils/api/players';
 import { canUserAccessRoom, getRoomData } from '@/utils/api/rooms';

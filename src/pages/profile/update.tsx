@@ -4,7 +4,7 @@ import { auth } from '@/utils/db/firebase';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { updateProfile } from 'firebase/auth';
-import PlayerAvatar from '@/components/question-page/player-avatar';
+import PlayerAvatar from '@/components/player-avatar/player-avatar';
 import ProfileLayout from './layout';
 import { NextPageWithLayout } from '../_app';
 import Image from 'next/image';

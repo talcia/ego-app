@@ -1,6 +1,6 @@
 import Button from '@/components/button/button';
 import Link from 'next/link';
-import PlayerAvatar from '@/components/question-page/player-avatar';
+import PlayerAvatar from '@/components/player-avatar/player-avatar';
 import ProfileLayout from './layout';
 import { NextPageWithLayout } from '../_app';
 import { useUserSession } from '@/hooks/useUserSession';

@@ -2,7 +2,7 @@ import { PlayerInLobby } from '@/types/room-types';
 import BronzeMedal from '../medals/bronze-medal';
 import GoldMedal from '../medals/gold-medal';
 import SilverMedal from '../medals/silver-medal';
-import PlayerAvatar from '../question-page/player-avatar';
+import PlayerAvatar from '../player-avatar/player-avatar';
 
 interface PlayerListProps {
 	players: PlayerInLobby[];
