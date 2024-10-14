@@ -48,7 +48,7 @@ const PointsResult: React.FC<PointsResultProps> = ({
 	return (
 		<>
 			{!isEliminatedFromPrevRound && (
-				<div>
+				<div className="text-center">
 					{isUserAnswerCorrect && (
 						<p className="text-customWhite">
 							Correct Answer, you get {coin} coin{coin > 1 && 's'}

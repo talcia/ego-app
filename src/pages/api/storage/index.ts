@@ -59,7 +59,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 				const storageRef = ref(storage, `images/${fileId}`);
 
 				const fileBuffer = await fs.promises.readFile(file.filepath);
-				await uploadBytes(storageRef, fileBuffer, {
+				const uint8Array = new Uint8Array(fileBuffer);
+				await uploadBytes(storageRef, uint8Array, {
 					contentType: file.mimetype || undefined,
 				});
 

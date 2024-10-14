@@ -145,7 +145,7 @@ const RoundSummarizePage: React.FC<RoundSummarizePageProps> = ({ user }) => {
 	};
 	// add animation
 	return (
-		<>
+		<div>
 			<div>
 				<p className="text-customWhite mb-4 text-center">
 					Correct answer is
@@ -158,7 +158,9 @@ const RoundSummarizePage: React.FC<RoundSummarizePageProps> = ({ user }) => {
 				/>
 			</div>
 			<div className="py-5">
-				<p className="text-customWhite my-3">{roundData?.question}</p>
+				<p className="text-customWhite my-3 text-center">
+					{roundData?.question}
+				</p>
 				<AnswerWithBadgeList
 					answers={roundData?.answers}
 					correctAnswer={roundData?.correctAnswer}
@@ -183,7 +185,7 @@ const RoundSummarizePage: React.FC<RoundSummarizePageProps> = ({ user }) => {
 					{isUserReady ? 'Not ready' : 'Next'}
 				</Button>
 			</div>
-		</>
+		</div>
 	);
 };
 

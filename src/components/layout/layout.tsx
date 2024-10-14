@@ -8,7 +8,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 	return (
 		<SessionProvider>
 			<div
-				className={`container flex flex-col items-center mx-auto h-full`}
+				className={`container flex flex-col items-center mx-auto h-full max-w-sm py-10`}
 			>
 				{children}
 			</div>

@@ -46,7 +46,9 @@ const PlayerEliminatedPage: React.FC<PlayerEliminatedPageProps> = ({
 	return (
 		<div className="text-customWhite">
 			<PlayerAvatar playerId={eliminatedPlayers[index].id} />
-			{eliminatedPlayers[index].name} was eliminated
+			<p className="py-2">
+				{eliminatedPlayers[index].name} was eliminated
+			</p>
 		</div>
 	);
 };

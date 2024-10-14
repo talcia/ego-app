@@ -83,7 +83,7 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
 				/>
 			</div>
 			<div className="py-5">
-				<p className="text-customWhite my-3">{question}</p>
+				<p className="text-customWhite my-3 text-center">{question}</p>
 				<AnswersList
 					answers={answers}
 					selectedAnswer={selectedAnswer}
