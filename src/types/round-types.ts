@@ -17,3 +17,12 @@ export interface EliminatedPlayer {
 	id: string;
 	name: string;
 }
+
+export interface RoundData {
+	answers: Answer[];
+	playersAnswers: PlayerAnswer[];
+	questionAboutPlayer: { id: string; name: string };
+	eliminatedPlayers: EliminatedPlayer[];
+	correctAnswer: string;
+	question: string;
+}

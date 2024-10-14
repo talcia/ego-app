@@ -5,7 +5,7 @@ import PointsResult from '@/components/summarize-page/points-results';
 
 import PlayerContext from '@/store/player-context';
 import RoundContext from '@/store/round-context';
-import { PlayerAnswer } from '@/types/round-types';
+import { PlayerAnswer, RoundData } from '@/types/round-types';
 import { User } from '@/types/user-types';
 import { getSessionUser } from '@/utils/auth/server-auth';
 import { db } from '@/utils/db/firebase';
@@ -25,7 +25,7 @@ const RoundSummarizePage: React.FC<RoundSummarizePageProps> = ({ user }) => {
 	const {
 		query: { roundNumber, roomCode },
 	} = router;
-	const [roundData, setRoundData] = useState<any>();
+	const [roundData, setRoundData] = useState<RoundData>();
 	const [userAnswer, setUserAnswer] = useState<{
 		answer: string;
 		coin: number;
@@ -46,7 +46,7 @@ const RoundSummarizePage: React.FC<RoundSummarizePageProps> = ({ user }) => {
 		);
 
 		const unsubscribe = onSnapshot(roundCollection, (docSnap) => {
-			const roundData = docSnap.data();
+			const roundData = docSnap.data() as RoundData;
 			setRoundData(roundData);
 		});
 
@@ -73,10 +73,12 @@ const RoundSummarizePage: React.FC<RoundSummarizePageProps> = ({ user }) => {
 			const player = roundData?.playersAnswers.find(
 				(player: PlayerAnswer) => player.id === user.id
 			);
-			setUserAnswer({
-				answer: player?.answer,
-				coin: Number(player?.coin),
-			});
+			if (player?.answer) {
+				setUserAnswer({
+					answer: player?.answer,
+					coin: Number(player?.coin),
+				});
+			}
 		}
 	}, [roundData, user.id]);
 
@@ -104,7 +106,7 @@ const RoundSummarizePage: React.FC<RoundSummarizePageProps> = ({ user }) => {
 		if (!isEveryPlayerReady) {
 			return;
 		}
-		if (roundData?.eliminatedPlayers.length > 0) {
+		if (roundData?.eliminatedPlayers.length! > 0) {
 			router.replace(`/room/${roomCode}/round/${roundNumber}/eliminated`);
 		} else if (Number(roundNumber) === numberOfRounds) {
 			finishGame();

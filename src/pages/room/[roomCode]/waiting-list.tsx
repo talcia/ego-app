@@ -15,7 +15,7 @@ const WaitingList: React.FC = () => {
 	const {
 		query: { roomCode },
 	} = router;
-	const [waitingList, setWaitingList] = useState<any[]>([]);
+	const [waitingList, setWaitingList] = useState<PlayerInLobby[]>([]);
 
 	useEffect(() => {
 		if (!roomCode || Array.isArray(roomCode)) {

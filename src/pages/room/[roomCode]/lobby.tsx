@@ -25,8 +25,8 @@ const RoomLobby: NextPageWithLayout<RoomLobbyProps> = ({ user }) => {
 	const {
 		query: { roomCode },
 	} = router;
-	const [players, setPlayers] = useState<any[]>([]);
-	const [waitingList, setWaitingList] = useState<any[]>([]);
+	const [players, setPlayers] = useState<PlayerInLobby[]>([]);
+	const [waitingList, setWaitingList] = useState<PlayerInLobby[]>([]);
 	const { isAdmin, setIsAdmin, setPoints, setIsEliminated } =
 		useContext(PlayerContext);
 	const [isReady, setIsReady] = useState(false);
