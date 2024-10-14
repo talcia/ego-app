@@ -4,13 +4,13 @@ import Input from '@/components/input/input';
 import Logo from '@/components/logo/logo';
 import AdminContext from '@/store/player-context';
 import RoundContext from '@/store/round-context';
+import { User } from '@/types/user-types';
 import { getSessionUser } from '@/utils/auth/server-auth';
 import { db } from '@/utils/db/firebase';
 import { collection, getDocs } from 'firebase/firestore';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { useContext, useEffect, useState } from 'react';
-import { User } from '../profile';
 
 interface CreateRoomProps {
 	user: User;

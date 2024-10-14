@@ -2,10 +2,11 @@ import Button from '@/components/button/button';
 import PlayerAvatar from '@/components/question-page/player-avatar';
 import AnswerWithBadgeList from '@/components/summarize-page/answer-with-badge-list';
 import PointsResult from '@/components/summarize-page/points-results';
-import { User } from '@/pages/profile';
 
 import PlayerContext from '@/store/player-context';
 import RoundContext from '@/store/round-context';
+import { PlayerAnswer } from '@/types/round-types';
+import { User } from '@/types/user-types';
 import { getSessionUser } from '@/utils/auth/server-auth';
 import { db } from '@/utils/db/firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
@@ -70,7 +71,7 @@ const RoundSummarizePage: React.FC<RoundSummarizePageProps> = ({ user }) => {
 	useEffect(() => {
 		if (roundData) {
 			const player = roundData?.playersAnswers.find(
-				(player: any) => player.id === user.id
+				(player: PlayerAnswer) => player.id === user.id
 			);
 			setUserAnswer({
 				answer: player?.answer,
@@ -97,7 +98,7 @@ const RoundSummarizePage: React.FC<RoundSummarizePageProps> = ({ user }) => {
 		};
 
 		const isEveryPlayerReady = roundData?.playersAnswers.every(
-			(player: any) => player.isReadyForNextRound
+			(player: PlayerAnswer) => player.isReadyForNextRound
 		);
 
 		if (!isEveryPlayerReady) {
@@ -162,7 +163,7 @@ const RoundSummarizePage: React.FC<RoundSummarizePageProps> = ({ user }) => {
 					answers={roundData?.answers}
 					correctAnswer={roundData?.correctAnswer}
 					playersAnswers={roundData?.playersAnswers.filter(
-						(player: any) =>
+						(player: PlayerAnswer) =>
 							player.id !== roundData?.questionAboutPlayer.id
 					)}
 				/>

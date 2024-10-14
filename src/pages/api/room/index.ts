@@ -2,9 +2,8 @@ import { db } from '@/utils/db/firebase';
 import { collection, doc, getDoc, setDoc } from 'firebase/firestore';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getServerSession } from 'next-auth';
-import { getSession } from 'next-auth/react';
 import { authOptions } from '../auth/[...nextauth]';
-
+import { PlayerInLobby } from '@/types/room-types';
 // api/room
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 	if (req.method === 'POST') {
@@ -18,7 +17,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 		const { roomCode, user, numberOfRounds, initialPoints } =
 			req.body as unknown as {
 				roomCode: string;
-				user: any;
+				user: PlayerInLobby;
 				numberOfRounds: number;
 				initialPoints: number;
 			};

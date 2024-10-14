@@ -11,9 +11,10 @@ import { useContext, useEffect, useState } from 'react';
 import Logo from '@/components/logo/logo';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faGear } from '@fortawesome/free-solid-svg-icons';
-import { User } from '@/pages/profile';
 import { getSessionUser } from '@/utils/auth/server-auth';
 import { GetServerSideProps } from 'next';
+import { User } from '@/types/user-types';
+import { PlayerInLobby } from '@/types/room-types';
 
 interface RoomLobbyProps {
 	user: User;
@@ -75,14 +76,14 @@ const RoomLobby: NextPageWithLayout<RoomLobbyProps> = ({ user }) => {
 		const playersCollection = collection(db, 'rooms', roomCode, 'players');
 
 		const unsubscribe = onSnapshot(playersCollection, (docSnap) => {
-			const players = docSnap.docs.map((doc: any) => ({
+			const players = docSnap.docs.map((doc) => ({
 				id: doc.id,
 				...doc.data(),
-			}));
-			const acceptedPlayers: any[] = [];
-			const waitingPlayers: any[] = [];
+			})) as PlayerInLobby[];
+			const acceptedPlayers: PlayerInLobby[] = [];
+			const waitingPlayers: PlayerInLobby[] = [];
 
-			players.map((player: any) => {
+			players.map((player) => {
 				if (player.status === 'accepted') acceptedPlayers.push(player);
 				if (player.status === 'pending') waitingPlayers.push(player);
 			});

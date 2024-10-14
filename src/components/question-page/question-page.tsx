@@ -1,13 +1,13 @@
 import { useContext, useEffect, useState } from 'react';
-import AnswersList, { Answer } from './answers-list';
+import AnswersList from './answers-list';
 import PlayerAvatar from './player-avatar';
 import Coin from './coin';
 import Button from '../button/button';
-import PlayersAvatarList from '../players-list/players-list-avatars';
 import { pushPlayerAnswer } from '@/utils/api/rounds';
 import router from 'next/router';
 import PlayerContext from '@/store/player-context';
-import { User } from '@/pages/profile';
+import { User } from '@/types/user-types';
+import { Answer, PlayerAnswer } from '@/types/round-types';
 
 export interface QuestionPageProps {
 	question: string;
@@ -17,7 +17,7 @@ export interface QuestionPageProps {
 		name: string;
 		avatar: string;
 	};
-	playersAnswers: { id: string; avatar: string; isReady: boolean }[];
+	playersAnswers: PlayerAnswer[];
 	user: User;
 }
 

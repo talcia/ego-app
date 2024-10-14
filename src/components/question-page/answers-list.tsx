@@ -1,11 +1,6 @@
 import { Dispatch, SetStateAction } from 'react';
 import Button from '../button/button';
-
-export interface Answer {
-	id: string;
-	label: string;
-	isChecked: boolean;
-}
+import { Answer } from '@/types/round-types';
 
 interface AnswersListProps {
 	answers: Answer[];

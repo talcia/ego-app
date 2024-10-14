@@ -5,12 +5,6 @@ import ProfileLayout from './layout';
 import { NextPageWithLayout } from '../_app';
 import { useSession } from 'next-auth/react';
 
-export interface User {
-	name: string;
-	id: string;
-	email: string;
-}
-
 const Profile: NextPageWithLayout = () => {
 	const { data } = useSession();
 

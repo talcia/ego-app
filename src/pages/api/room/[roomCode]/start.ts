@@ -50,7 +50,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 				const roundData = {
 					question: question,
 					answers: answers,
-					playersAnswers: players.map((player: any) => ({
+					playersAnswers: players.map((player: { id: string }) => ({
 						id: player.id,
 						answer: '',
 						coin: 0,

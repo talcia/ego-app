@@ -1,16 +1,6 @@
+import { Answer, PlayerAnswer } from '@/types/round-types';
 import Button from '../button/button';
 import PlayerAvatar from '../question-page/player-avatar';
-
-export interface Answer {
-	id: string;
-	label: string;
-}
-
-interface PlayerAnswer {
-	answer: string;
-	coin: number;
-	id: string;
-}
 
 interface AnswersListProps {
 	answers: Answer[];

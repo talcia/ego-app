@@ -5,7 +5,7 @@ export const updatePlayer = async (
 	roomCode: string,
 	playerId: string,
 	key: string,
-	value: any
+	value: string | number | boolean
 ) => {
 	const playerCollection = doc(db, 'rooms', roomCode, 'players', playerId);
 
@@ -35,7 +35,7 @@ export const getPlayers = async (roomCode: string) => {
 		'players'
 	);
 	const playersData = await getDocs(playersCollection);
-	const players = playersData.docs.map((doc: any) => ({
+	const players = playersData.docs.map((doc) => ({
 		id: doc.id,
 		...doc.data(),
 	}));

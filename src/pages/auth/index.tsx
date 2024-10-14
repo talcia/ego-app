@@ -23,7 +23,7 @@ const LoginPage = () => {
 		if (session.status === 'authenticated') {
 			router.push('/profile');
 		}
-	}, [session]);
+	}, [router, session]);
 
 	const handleLogin = async () => {
 		setIsLoading(true);

@@ -4,10 +4,10 @@ import Error from '@/components/error/error';
 import Logo from '@/components/logo/logo';
 import { useRouter } from 'next/router';
 import { useContext, useState } from 'react';
-import { User } from '../profile';
 import PlayerContext from '@/store/player-context';
 import { GetServerSideProps } from 'next';
 import { getSessionUser } from '@/utils/auth/server-auth';
+import { User } from '@/types/user-types';
 
 interface JoinRoomProps {
 	user: User;

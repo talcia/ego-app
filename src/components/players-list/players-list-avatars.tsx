@@ -1,14 +1,8 @@
-import { User } from '@/pages/profile';
+import { User } from '@/types/user-types';
 import PlayerAvatar from '../question-page/player-avatar';
-
-interface Player {
-	id: string;
-	avatar: string;
-	isReady: boolean;
-}
-
+import { PlayerInLobby } from '@/types/room-types';
 interface PlayersAvatarListProps {
-	players: Player[];
+	players: PlayerInLobby[];
 	user: User;
 }
 

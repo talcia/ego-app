@@ -2,8 +2,9 @@ import Logo from '@/components/logo/logo';
 import QuestionPage, {
 	QuestionPageProps,
 } from '@/components/question-page/question-page';
-import { User } from '@/pages/profile';
 import PlayerContext from '@/store/player-context';
+import { PlayerAnswer } from '@/types/round-types';
+import { User } from '@/types/user-types';
 import { getRoundData, pushPlayerAnswer } from '@/utils/api/rounds';
 import { getSessionUser } from '@/utils/auth/server-auth';
 import { db } from '@/utils/db/firebase';
@@ -58,7 +59,7 @@ const RoundPage: React.FC<QuestionPageProps & { user: User }> = ({
 			const roundData = docSnap.data();
 			const players = roundData?.playersAnswers;
 			const isEveryPlayerReady = players.every(
-				(player: any) =>
+				(player: PlayerAnswer) =>
 					player.isReady ||
 					(player.isEliminated &&
 						roundData?.questionAboutPlayer.id !== player.id)

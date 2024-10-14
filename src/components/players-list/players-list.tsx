@@ -2,17 +2,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import PlayerAvatar from '../question-page/player-avatar';
 import ActionButtons from './action-buttons';
 import { faCrown } from '@fortawesome/free-solid-svg-icons';
-
-interface Player {
-	id: string;
-	name: string;
-	avatar: string;
-	admin: boolean;
-	isReady: boolean;
-}
-
+import { PlayerInLobby } from '@/types/room-types';
 interface PlayerListProps {
-	players: Player[];
+	players: PlayerInLobby[];
 	isWaitingList: boolean;
 	onDeclineClick?: (userId: string) => void;
 	onAcceptClick?: (userId: string) => void;

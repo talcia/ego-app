@@ -28,7 +28,7 @@ export const authOptions: NextAuthOptions = {
 					}
 					return null;
 				} catch (error) {
-					console.error('Login failed: 1', error);
+					console.error('Login failed', error);
 					return null;
 				}
 			},
@@ -47,7 +47,7 @@ export const authOptions: NextAuthOptions = {
 						};
 					}
 				} catch (error) {
-					console.error('Login failed: 2', error);
+					console.error('Login failed', error);
 					return null;
 				}
 			},
@@ -62,16 +62,20 @@ export const authOptions: NextAuthOptions = {
 		}),
 	],
 	callbacks: {
-		async jwt({ token, user }: { token: JWT; user?: User }) {
-			if (user) {
+		async jwt({ token, user, trigger, session }) {
+			if (trigger === 'update') {
+				token.name = session.name;
+			} else if (user) {
 				token.id = user.id;
 				token.name = user.name;
 			}
+
 			return token;
 		},
 		async session({ session, token }: { session: Session; token: JWT }) {
 			if (session.user) {
 				session.user.id = token.id as string;
+				session.user.name = token.name;
 			}
 			return session;
 		},

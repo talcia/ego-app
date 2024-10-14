@@ -42,7 +42,7 @@ const Profile: NextPageWithLayout = () => {
 				await updateProfile(auth.currentUser!, {
 					displayName: userName,
 				});
-				session.data.user.name = userName;
+				session.update({ name: userName });
 
 				setUserName('');
 				router.replace('/profile');
@@ -64,7 +64,7 @@ const Profile: NextPageWithLayout = () => {
 			await updateProfile(authUser, {
 				displayName: userName,
 			});
-			session.data.user.name = userName;
+			session.update({ name: userName });
 			setUserName('');
 			router.replace('/profile');
 		}

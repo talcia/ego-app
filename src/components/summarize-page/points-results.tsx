@@ -1,14 +1,11 @@
-import { User } from '@/pages/profile';
 import PlayerContext from '@/store/player-context';
+import { User } from '@/types/user-types';
 import { useRouter } from 'next/router';
 import { useContext, useEffect, useState } from 'react';
 
 interface PointsResultProps {
 	correctAnswer: string;
-	userAnswer: {
-		answer: string;
-		coin: number;
-	};
+	userAnswer: { coin: number; answer: string };
 	user: User;
 }
 

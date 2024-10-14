@@ -35,12 +35,14 @@ export const updatePlayerAnswer = async (
 	}
 
 	const roundData = roundDoc.data();
-	const updatedPlayers = roundData.playersAnswers.map((player: any) => {
-		if (player.id === playerData.id) {
-			return { ...player, ...playerData };
+	const updatedPlayers = roundData.playersAnswers.map(
+		(player: PlayerData) => {
+			if (player.id === playerData.id) {
+				return { ...player, ...playerData };
+			}
+			return player;
 		}
-		return player;
-	});
+	);
 
 	return { updatedPlayers, roundCollection };
 };

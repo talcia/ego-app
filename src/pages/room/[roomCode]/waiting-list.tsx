@@ -1,5 +1,6 @@
 import Logo from '@/components/logo/logo';
 import PlayersList from '@/components/players-list/players-list';
+import { PlayerInLobby } from '@/types/room-types';
 import { getSessionUser } from '@/utils/auth/server-auth';
 import { db } from '@/utils/db/firebase';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
@@ -23,13 +24,13 @@ const WaitingList: React.FC = () => {
 		const playersCollection = collection(db, 'rooms', roomCode, 'players');
 
 		const unsubscribe = onSnapshot(playersCollection, (docSnap) => {
-			const players = docSnap.docs.map((doc: any) => ({
+			const players = docSnap.docs.map((doc) => ({
 				id: doc.id,
 				...doc.data(),
-			}));
+			})) as PlayerInLobby[];
 
 			const waitingPlayers = players.filter(
-				(player: any) => player.status === 'pending'
+				(player) => player.status === 'pending'
 			);
 
 			setWaitingList(waitingPlayers);

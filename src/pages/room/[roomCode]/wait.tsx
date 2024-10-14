@@ -1,7 +1,6 @@
 import Button from '@/components/button/button';
 import Logo from '@/components/logo/logo';
 import Spinner from '@/components/spinner/spinner';
-import { User } from '@/pages/profile';
 import { getSessionUser } from '@/utils/auth/server-auth';
 
 import { db } from '@/utils/db/firebase';
@@ -9,6 +8,8 @@ import { collection, onSnapshot } from 'firebase/firestore';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import { PlayerInLobby } from '@/types/room-types';
+import { User } from '@/types/user-types';
 
 interface WaitPageProps {
 	user: User;
@@ -26,11 +27,11 @@ const WaitPage: React.FC<WaitPageProps> = ({ user }) => {
 		const roomDocRef = collection(db, 'rooms', roomCode, 'players');
 
 		const unsubscribe = onSnapshot(roomDocRef, (docSnap) => {
-			const players = docSnap.docs.map((doc: any) => ({
+			const players = docSnap.docs.map((doc) => ({
 				id: doc.id,
 				...doc.data(),
-			}));
-			const player = players.find((player: any) => player.id === user.id);
+			})) as PlayerInLobby[];
+			const player = players.find((player) => player.id === user.id);
 			if (!player) {
 				router.back();
 			}

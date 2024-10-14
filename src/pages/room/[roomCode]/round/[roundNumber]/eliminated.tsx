@@ -1,19 +1,15 @@
 import PlayerAvatar from '@/components/question-page/player-avatar';
+import { EliminatedPlayer } from '@/types/round-types';
 import { getPlayerData, getPlayers } from '@/utils/api/players';
 import { getRoomData } from '@/utils/api/rooms';
 import { getRoundData } from '@/utils/api/rounds';
-import { db } from '@/utils/db/firebase';
-import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
 interface PlayerEliminatedPageProps {
 	isEndGame: boolean;
-	eliminatedPlayers: {
-		id: string;
-		name: string;
-	}[];
+	eliminatedPlayers: EliminatedPlayer[];
 }
 
 const PlayerEliminatedPage: React.FC<PlayerEliminatedPageProps> = ({
@@ -66,7 +62,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 	);
 
 	const eliminatedPlayers = roundData?.eliminatedPlayers;
-	const eliminatedPlayersArray: any[] = [];
+	const eliminatedPlayersArray: { id: string; name: string }[] = [];
 	for (let player of eliminatedPlayers) {
 		const { id, name } =
 			(await getPlayerData(roomCode as string, player)) || {};

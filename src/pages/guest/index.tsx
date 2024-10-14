@@ -4,7 +4,7 @@ import Error from '@/components/error/error';
 import Input from '@/components/input/input';
 import Logo from '@/components/logo/logo';
 import { useRouter } from 'next/router';
-import { signIn, useSession } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 
 const GuestPage = () => {
 	const [roomCode, setRoomCode] = useState('');
@@ -16,7 +16,6 @@ const GuestPage = () => {
 
 	const handleClick = async () => {
 		setIsLoading(true);
-		const user = await signIn('anonymously', { redirect: false });
 		const response = await fetch(`/api/room/${roomCode}/join`, {
 			method: 'POST',
 			body: JSON.stringify({

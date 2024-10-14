@@ -1,7 +1,6 @@
 import Button from '@/components/button/button';
-import PlayersResults, {
-	Player,
-} from '@/components/players-list/players-results';
+import PlayersResults from '@/components/players-list/players-results';
+import { PlayerInLobby } from '@/types/room-types';
 import { getPlayers } from '@/utils/api/players';
 import { getSessionUser } from '@/utils/auth/server-auth';
 import { GetServerSideProps } from 'next';
@@ -9,7 +8,7 @@ import { useRouter } from 'next/router';
 import { useState } from 'react';
 
 interface FinishPageProps {
-	players: Player[];
+	players: PlayerInLobby[];
 }
 
 const FinishPage: React.FC<FinishPageProps> = ({ players }) => {

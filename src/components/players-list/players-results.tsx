@@ -1,19 +1,11 @@
+import { PlayerInLobby } from '@/types/room-types';
 import BronzeMedal from '../medals/bronze-medal';
 import GoldMedal from '../medals/gold-medal';
 import SilverMedal from '../medals/silver-medal';
 import PlayerAvatar from '../question-page/player-avatar';
 
-export interface Player {
-	id: string;
-	name: string;
-	avatar: string;
-	admin: boolean;
-	isReady: boolean;
-	points: number;
-}
-
 interface PlayerListProps {
-	players: Player[];
+	players: PlayerInLobby[];
 }
 
 const PlayerResults: React.FC<PlayerListProps> = ({ players }) => {

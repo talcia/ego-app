@@ -28,11 +28,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 			const downloadURL = await getDownloadURL(fileRef);
 
 			res.status(200).json({ downloadURL });
-		} catch (e: any) {
-			console.error('Error fetching file URL:', e.message);
-			res.status(500).json({
-				error: e.message || 'Failed to retrieve file URL',
-			});
+		} catch (e) {
+			if (e instanceof Error) {
+				res.status(500).json({
+					error: e.message || 'Failed to retrieve file URL',
+				});
+			}
 		}
 	}
 	if (req.method === 'POST') {
@@ -65,11 +66,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 				return res
 					.status(200)
 					.json({ message: 'Uploaded Successfully' });
-			} catch (e: any) {
-				console.error('Upload error:', e.message);
-				return res
-					.status(500)
-					.json({ error: e.message || 'Failed to upload file' });
+			} catch (e) {
+				if (e instanceof Error) {
+					return res
+						.status(500)
+						.json({ error: e.message || 'Failed to upload file' });
+				}
 			}
 		});
 	}
