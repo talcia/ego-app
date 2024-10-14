@@ -7,9 +7,10 @@ import { useUserSession } from '@/hooks/useUserSession';
 import PlayerContext from '@/store/player-context';
 import RoundContext from '@/store/round-context';
 import { PlayerAnswer, RoundData } from '@/types/round-types';
-import { User } from '@/types/user-types';
+import { getRoundData } from '@/utils/api/rounds';
 import { db } from '@/utils/db/firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
+import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { useContext, useEffect, useState } from 'react';
 
@@ -173,6 +174,23 @@ const RoundSummarizePage: React.FC = () => {
 			</div>
 		</div>
 	);
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+	const { roundNumber, roomCode } = context.params!;
+
+	const roundData = await getRoundData(
+		roomCode as string,
+		roundNumber as string
+	);
+
+	if (!roundData) {
+		return { notFound: true };
+	}
+
+	return {
+		props: {},
+	};
 };
 
 export default RoundSummarizePage;

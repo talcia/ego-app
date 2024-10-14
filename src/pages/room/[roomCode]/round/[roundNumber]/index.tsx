@@ -105,6 +105,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 		roomCode as string,
 		roundNumber as string
 	);
+
+	if (!roundData) {
+		return { notFound: true };
+	}
+
 	const { question, answers, questionAboutPlayer, playersAnswers } =
 		roundData;
 

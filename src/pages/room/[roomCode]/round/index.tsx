@@ -1,6 +1,8 @@
 import Logo from '@/components/logo/logo';
+import { getRoomData } from '@/utils/api/rooms';
 import { db } from '@/utils/db/firebase';
 import { collection, onSnapshot } from 'firebase/firestore';
+import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 
@@ -34,6 +36,20 @@ const StartingPage = () => {
 			</h1>
 		</>
 	);
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+	const { roomCode } = context.params!;
+
+	const roomData = await getRoomData(roomCode as string);
+
+	if (!roomData) {
+		return { notFound: true };
+	}
+
+	return {
+		props: {},
+	};
 };
 
 export default StartingPage;

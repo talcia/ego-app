@@ -8,6 +8,8 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { PlayerInLobby } from '@/types/room-types';
 import { useUserSession } from '@/hooks/useUserSession';
+import { GetServerSideProps } from 'next';
+import { getRoomData } from '@/utils/api/rooms';
 
 const WaitPage: React.FC = () => {
 	const router = useRouter();
@@ -66,6 +68,20 @@ const WaitPage: React.FC = () => {
 			</Button>
 		</div>
 	);
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+	const { roomCode } = context.params!;
+
+	const roomData = await getRoomData(roomCode as string);
+
+	if (!roomData) {
+		return { notFound: true };
+	}
+
+	return {
+		props: {},
+	};
 };
 
 export default WaitPage;

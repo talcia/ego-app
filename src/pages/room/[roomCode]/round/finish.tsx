@@ -2,6 +2,7 @@ import Button from '@/components/button/button';
 import PlayersResults from '@/components/players-list/players-results';
 import { PlayerInLobby } from '@/types/room-types';
 import { getPlayers } from '@/utils/api/players';
+import { getRoomData } from '@/utils/api/rooms';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
@@ -48,6 +49,12 @@ export default FinishPage;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
 	const { roomCode } = context.params!;
+
+	const roomData = await getRoomData(roomCode as string);
+
+	if (!roomData) {
+		return { notFound: true };
+	}
 
 	const players = await getPlayers(roomCode as string);
 

@@ -23,5 +23,9 @@ export const getRoomData = async (roomCode: string) => {
 	const roomRef = doc(db, 'rooms', roomCode);
 	const room = await getDoc(roomRef);
 
+	if (!room.exists()) {
+		return null;
+	}
+
 	return room.data();
 };

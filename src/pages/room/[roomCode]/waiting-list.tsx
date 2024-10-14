@@ -1,10 +1,12 @@
 import Logo from '@/components/logo/logo';
 import PlayersList from '@/components/players-list/players-list';
 import { PlayerInLobby } from '@/types/room-types';
+import { getRoomData } from '@/utils/api/rooms';
 import { db } from '@/utils/db/firebase';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { collection, onSnapshot } from 'firebase/firestore';
+import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
@@ -42,13 +44,13 @@ const WaitingList: React.FC = () => {
 	};
 
 	const onAcceptClick = (userId: string) => {
-		fetch(`/api/room/${router.query.roomCode}/player/${userId}`, {
+		fetch(`/api/room/${roomCode}/player/${userId}`, {
 			method: 'POST',
 		});
 	};
 
 	const onDeclineClick = (userId: string) => {
-		fetch(`/api/room/${router.query.roomCode}/player/${userId}`, {
+		fetch(`/api/room/${roomCode}/player/${userId}`, {
 			method: 'DELETE',
 		});
 	};
@@ -85,6 +87,20 @@ const WaitingList: React.FC = () => {
 			</div>
 		</div>
 	);
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+	const { roomCode } = context.params!;
+
+	const roomData = await getRoomData(roomCode as string);
+
+	if (!roomData) {
+		return { notFound: true };
+	}
+
+	return {
+		props: {},
+	};
 };
 
 export default WaitingList;

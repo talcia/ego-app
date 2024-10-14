@@ -13,6 +13,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faGear } from '@fortawesome/free-solid-svg-icons';
 import { PlayerInLobby } from '@/types/room-types';
 import { useUserSession } from '@/hooks/useUserSession';
+import { getRoomData } from '@/utils/api/rooms';
+import { GetServerSideProps } from 'next';
 
 const RoomLobby: NextPageWithLayout = () => {
 	const router = useRouter();
@@ -184,6 +186,20 @@ const RoomLobby: NextPageWithLayout = () => {
 			)}
 		</div>
 	);
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+	const { roomCode } = context.params!;
+
+	const roomData = await getRoomData(roomCode as string);
+
+	if (!roomData) {
+		return { notFound: true };
+	}
+
+	return {
+		props: {},
+	};
 };
 
 export default RoomLobby;

@@ -95,6 +95,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 	const roomData = await getRoomData(roomCode as string);
 
+	if (!roomData) {
+		return {
+			notFound: true,
+		};
+	}
+
 	const { initialPoints, numberOfRounds, owner } = roomData || {};
 
 	if (owner === session?.user.id) {

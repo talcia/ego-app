@@ -63,6 +63,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 		roundNumber as string
 	);
 
+	if (!roundData) {
+		return { notFound: true };
+	}
+
 	const eliminatedPlayers = roundData?.eliminatedPlayers;
 	const eliminatedPlayersArray: { id: string; name: string }[] = [];
 	for (let player of eliminatedPlayers) {
@@ -72,6 +76,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 	}
 
 	const roomData = await getRoomData(roomCode as string);
+
+	if (!roomData) {
+		return {
+			notFound: true,
+		};
+	}
 
 	const players = await getPlayers(roomCode as string);
 

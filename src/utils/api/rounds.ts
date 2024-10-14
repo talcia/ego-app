@@ -103,6 +103,11 @@ export const getRoundData = async (roomCode: string, roundNumber: string) => {
 	const roundCollection = doc(db, 'rooms', roomCode, 'rounds', roundNumber);
 
 	const roundDoc = await getDoc(roundCollection);
+
+	if (!roundDoc.exists()) {
+		return null;
+	}
+
 	const roundData = roundDoc.data() || {};
 	return roundData;
 };
