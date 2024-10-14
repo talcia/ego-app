@@ -48,7 +48,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 				});
 				res.status(201).json({ message: 'Room created' });
 			} catch (e) {
-				res.status(500).json({ message: 'Something went wrong' });
+				res.status(500).json({
+					message: 'Oops! Something went wrong. Please try again.',
+				});
 			}
 		}
 	}

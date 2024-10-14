@@ -32,7 +32,9 @@ const SignUpPage = () => {
 				setPassword('');
 				setConfirmPassword('');
 			} catch (e) {
-				setErrorMessage('An error occurred. Please try again.');
+				setErrorMessage(
+					'Oops! Something went wrong. Please try again.'
+				);
 			}
 		}
 		setIsLoading(false);

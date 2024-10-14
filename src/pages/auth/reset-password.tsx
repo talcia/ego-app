@@ -24,7 +24,9 @@ const ResetPasswordPage = () => {
 				await sendPasswordResetEmail(auth, email);
 				setIsEmailSent(true);
 			} catch (e) {
-				setErrorMessage('An error occurred. Please try again.');
+				setErrorMessage(
+					'Oops! Something went wrong. Please try again.'
+				);
 				setCheckError(false);
 			}
 		}

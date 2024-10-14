@@ -36,7 +36,7 @@ const LoginPage = () => {
 				callbackUrl: '/profile',
 			});
 		} catch (e) {
-			setErrorMessage('An error occured. Please try again');
+			setErrorMessage('Oops! Something went wrong. Please try again.');
 		}
 		setIsLoading(false);
 	};

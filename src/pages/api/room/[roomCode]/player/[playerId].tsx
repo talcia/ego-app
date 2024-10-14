@@ -59,7 +59,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
 			res.status(201).json({ message: 'User deleted' });
 		} catch (e) {
-			res.status(500).json({ message: 'Something went wrong' });
+			res.status(500).json({
+				message: 'Oops! Something went wrong. Please try again.',
+			});
 		}
 	}
 	if (req.method === 'POST') {
@@ -81,7 +83,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 			await setDoc(playerCollection, updatedPlayer);
 			res.status(201).json({ message: 'User added' });
 		} catch (e) {
-			res.status(500).json({ message: 'Something went wrong' });
+			res.status(500).json({
+				message: 'Oops! Something went wrong. Please try again.',
+			});
 		}
 	}
 	if (req.method === 'PATCH') {
@@ -105,7 +109,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 			await updateDoc(playerCollection, updatedPlayer);
 			res.status(201).json({ message: 'User added' });
 		} catch (e) {
-			res.status(500).json({ message: 'Something went wrong' });
+			res.status(500).json({
+				message: 'Oops! Something went wrong. Please try again.',
+			});
 		}
 	}
 };
