@@ -12,7 +12,7 @@ import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import Input from '@/components/input/input';
 import { GetServerSideProps } from 'next';
 import { getRoomData } from '@/utils/api/rooms';
-import { getSessionUser } from '@/utils/auth/server-auth';
+import { getSession } from 'next-auth/react';
 
 const RoomSettings: NextPageWithLayout<{
 	initialPoints: number;
@@ -89,11 +89,7 @@ const RoomSettings: NextPageWithLayout<{
 export default RoomSettings;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-	const session = await getSessionUser(context);
-
-	if (session.redirect) {
-		return session;
-	}
+	const session = await getSession({ req: context.req });
 
 	const { roomCode } = context.params!;
 
@@ -101,7 +97,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 	const { initialPoints, numberOfRounds, owner } = roomData || {};
 
-	if (owner === session.props.user.id) {
+	if (owner === session?.user.id) {
 		return {
 			redirect: {
 				destination: `/room/${roomCode}/lobby`,

@@ -4,7 +4,7 @@ import Error from '@/components/error/error';
 import Input from '@/components/input/input';
 import Logo from '@/components/logo/logo';
 import { useRouter } from 'next/router';
-import { useSession } from 'next-auth/react';
+import { useUserSession } from '@/hooks/useUserSession';
 
 const GuestPage = () => {
 	const [roomCode, setRoomCode] = useState('');
@@ -12,7 +12,7 @@ const GuestPage = () => {
 	const [errorMessage, setErrorMessage] = useState('');
 	const router = useRouter();
 	const [isLoading, setIsLoading] = useState(false);
-	const session = useSession();
+	const { id } = useUserSession();
 
 	const handleClick = async () => {
 		setIsLoading(true);
@@ -21,7 +21,7 @@ const GuestPage = () => {
 			body: JSON.stringify({
 				user: {
 					name: userName,
-					id: session?.data?.user.id,
+					id: id,
 					isReady: false,
 					status: 'pending',
 				},

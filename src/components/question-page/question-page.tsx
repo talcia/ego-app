@@ -6,8 +6,8 @@ import Button from '../button/button';
 import { pushPlayerAnswer } from '@/utils/api/rounds';
 import router from 'next/router';
 import PlayerContext from '@/store/player-context';
-import { User } from '@/types/user-types';
 import { Answer, PlayerAnswer } from '@/types/round-types';
+import { useUserSession } from '@/hooks/useUserSession';
 
 export interface QuestionPageProps {
 	question: string;
@@ -18,7 +18,6 @@ export interface QuestionPageProps {
 		avatar: string;
 	};
 	playersAnswers: PlayerAnswer[];
-	user: User;
 }
 
 const QuestionPage: React.FC<QuestionPageProps> = ({
@@ -26,12 +25,12 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
 	answers,
 	questionAboutPlayer,
 	playersAnswers,
-	user,
 }) => {
 	const [selectedCoins, setSelectedCoins] = useState(0);
 	const [selectedAnswer, setSelectedAnswer] = useState('');
 	const { points, isEliminated } = useContext(PlayerContext);
 	const [isReady, setIsReady] = useState(false);
+	const { id } = useUserSession();
 
 	const {
 		query: { roundNumber, roomCode },
@@ -55,7 +54,7 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
 			playerData: {
 				isEliminated,
 				isReady: !isReady,
-				id: user.id,
+				id: id,
 				isReadyForNextRound: false,
 				answer: selectedAnswer,
 				...(!isEliminated && {
@@ -90,7 +89,7 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
 					setSelectedAnswer={setSelectedAnswer}
 				/>
 			</div>
-			{questionAboutPlayer.id !== user.id && !isEliminated && (
+			{questionAboutPlayer.id !== id && !isEliminated && (
 				<div className="mt-3">
 					<div className="flex justify-around">
 						<Coin
@@ -107,12 +106,10 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
 					</p>
 				</div>
 			)}
-			{(!isEliminated || questionAboutPlayer.id === user.id) && (
+			{(!isEliminated || questionAboutPlayer.id === id) && (
 				<Button
 					disabled={
-						!(
-							questionAboutPlayer.id === user.id && selectedAnswer
-						) &&
+						!(questionAboutPlayer.id === id && selectedAnswer) &&
 						(!selectedAnswer || !selectedCoins)
 					}
 					onClick={onClickReady}

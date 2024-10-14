@@ -2,10 +2,9 @@ import Button from '@/components/button/button';
 import Error from '@/components/error/error';
 import Input from '@/components/input/input';
 import Logo from '@/components/logo/logo';
+import { useUserSession } from '@/hooks/useUserSession';
 import AdminContext from '@/store/player-context';
 import RoundContext from '@/store/round-context';
-import { User } from '@/types/user-types';
-import { getSessionUser } from '@/utils/auth/server-auth';
 import { db } from '@/utils/db/firebase';
 import { collection, getDocs } from 'firebase/firestore';
 import { GetServerSideProps } from 'next';
@@ -13,11 +12,10 @@ import { useRouter } from 'next/router';
 import { useContext, useEffect, useState } from 'react';
 
 interface CreateRoomProps {
-	user: User;
 	questionsLength: number;
 }
 
-const CreateRoom: React.FC<CreateRoomProps> = ({ user, questionsLength }) => {
+const CreateRoom: React.FC<CreateRoomProps> = ({ questionsLength }) => {
 	const router = useRouter();
 	const { numberOfRounds, setNumberOfRounds, maxRounds, setMaxRounds } =
 		useContext(RoundContext);
@@ -26,6 +24,7 @@ const CreateRoom: React.FC<CreateRoomProps> = ({ user, questionsLength }) => {
 	const [errorMessage, setErrorMessage] = useState('');
 	const { setIsAdmin } = useContext(AdminContext);
 	const [isLoading, setIsLoading] = useState(false);
+	const { id, name, email } = useUserSession();
 
 	useEffect(() => {
 		setMaxRounds(questionsLength);
@@ -38,9 +37,9 @@ const CreateRoom: React.FC<CreateRoomProps> = ({ user, questionsLength }) => {
 			body: JSON.stringify({
 				roomCode,
 				user: {
-					name: user.name || user.email,
+					name: name || email,
 					admin: true,
-					id: user.id,
+					id: id,
 					isReady: true,
 					status: 'accepted',
 				},
@@ -95,18 +94,11 @@ const CreateRoom: React.FC<CreateRoomProps> = ({ user, questionsLength }) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-	const session = await getSessionUser(context);
-
-	if (session.redirect) {
-		return session;
-	}
-
 	const questionRef = collection(db, 'questions');
 	const questions = await getDocs(questionRef);
 
 	return {
 		props: {
-			user: session.props.user,
 			questionsLength: questions.docs.length,
 		},
 	};

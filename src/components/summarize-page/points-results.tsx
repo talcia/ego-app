@@ -1,18 +1,16 @@
+import { useUserSession } from '@/hooks/useUserSession';
 import PlayerContext from '@/store/player-context';
-import { User } from '@/types/user-types';
 import { useRouter } from 'next/router';
 import { useContext, useEffect, useState } from 'react';
 
 interface PointsResultProps {
 	correctAnswer: string;
 	userAnswer: { coin: number; answer: string };
-	user: User;
 }
 
 const PointsResult: React.FC<PointsResultProps> = ({
 	correctAnswer,
 	userAnswer: { coin, answer },
-	user,
 }) => {
 	const { points, setPoints, setIsEliminated, isEliminated } =
 		useContext(PlayerContext);
@@ -20,6 +18,7 @@ const PointsResult: React.FC<PointsResultProps> = ({
 	const {
 		query: { roomCode, roundNumber },
 	} = useRouter();
+	const { id } = useUserSession();
 	const isUserAnswerCorrect = correctAnswer === answer;
 
 	useEffect(() => {
@@ -36,14 +35,14 @@ const PointsResult: React.FC<PointsResultProps> = ({
 			setIsEliminated(true);
 			fetch(`/api/room/${roomCode}/round/${roundNumber}/eliminate`, {
 				method: 'POST',
-				body: JSON.stringify({ userId: user.id }),
+				body: JSON.stringify({ userId: id }),
 				headers: {
 					'Content-Type': 'application/json',
 				},
 			});
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [points, roomCode, roundNumber, setIsEliminated, user.id]);
+	}, [points, roomCode, roundNumber, setIsEliminated, id]);
 
 	return (
 		<>

@@ -2,7 +2,7 @@ import Logo from '@/components/logo/logo';
 import PlayerContext from '@/store/player-context';
 import { faGear, faSignOut } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { signOut, useSession } from 'next-auth/react';
+import { signOut } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { useContext } from 'react';
 
@@ -13,11 +13,6 @@ interface LayoutProps {
 const ProfileLayout: React.FC<LayoutProps> = ({ children }) => {
 	const router = useRouter();
 	const { setIsAdmin } = useContext(PlayerContext);
-	const session = useSession();
-
-	if (session.status === 'unauthenticated') {
-		router.replace('/auth');
-	}
 
 	const gearIconClick = () => {
 		if (router.pathname === '/profile') {

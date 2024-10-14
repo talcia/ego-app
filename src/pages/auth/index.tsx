@@ -29,13 +29,12 @@ const LoginPage = () => {
 		setIsLoading(true);
 		try {
 			await signInWithEmailAndPassword(auth, login, password);
-			signIn('credentials', {
+			await signIn('credentials', {
 				email: login,
 				password,
 				redirect: true,
 				callbackUrl: '/profile',
 			});
-			router.push('/profile');
 		} catch (e) {
 			setErrorMessage('An error occured. Please try again');
 		}

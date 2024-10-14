@@ -11,16 +11,10 @@ import { useContext, useEffect, useState } from 'react';
 import Logo from '@/components/logo/logo';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faGear } from '@fortawesome/free-solid-svg-icons';
-import { getSessionUser } from '@/utils/auth/server-auth';
-import { GetServerSideProps } from 'next';
-import { User } from '@/types/user-types';
 import { PlayerInLobby } from '@/types/room-types';
+import { useUserSession } from '@/hooks/useUserSession';
 
-interface RoomLobbyProps {
-	user: User;
-}
-
-const RoomLobby: NextPageWithLayout<RoomLobbyProps> = ({ user }) => {
+const RoomLobby: NextPageWithLayout = () => {
 	const router = useRouter();
 	const {
 		query: { roomCode },
@@ -32,6 +26,7 @@ const RoomLobby: NextPageWithLayout<RoomLobbyProps> = ({ user }) => {
 	const [isReady, setIsReady] = useState(false);
 	const { setNumberOfRounds } = useContext(RoundContext);
 	const [isLoading, setIsLoading] = useState(false);
+	const { id } = useUserSession();
 
 	useEffect(() => {
 		if (!roomCode || Array.isArray(roomCode)) {
@@ -44,7 +39,7 @@ const RoomLobby: NextPageWithLayout<RoomLobbyProps> = ({ user }) => {
 			if (docSnap.exists()) {
 				const { status, numberOfRounds, owner, initialPoints } =
 					docSnap.data();
-				if (owner === user.id) {
+				if (owner === id) {
 					setIsAdmin(true);
 				}
 				setNumberOfRounds(numberOfRounds);
@@ -66,7 +61,7 @@ const RoomLobby: NextPageWithLayout<RoomLobbyProps> = ({ user }) => {
 		setIsEliminated,
 		setNumberOfRounds,
 		setPoints,
-		user.id,
+		id,
 	]);
 
 	useEffect(() => {
@@ -96,7 +91,7 @@ const RoomLobby: NextPageWithLayout<RoomLobbyProps> = ({ user }) => {
 	}, [roomCode, router]);
 
 	const onClickReady = async () => {
-		fetch(`/api/room/${roomCode}/player/${user.id}`, {
+		fetch(`/api/room/${roomCode}/player/${id}`, {
 			method: 'PATCH',
 			body: JSON.stringify({ key: 'isReady', value: true }),
 			headers: {
@@ -107,7 +102,7 @@ const RoomLobby: NextPageWithLayout<RoomLobbyProps> = ({ user }) => {
 	};
 
 	const onNotClickReady = async () => {
-		fetch(`/api/room/${roomCode}/player/${user.id}`, {
+		fetch(`/api/room/${roomCode}/player/${id}`, {
 			method: 'PATCH',
 			body: JSON.stringify({ key: 'isReady', value: false }),
 			headers: {
@@ -128,7 +123,7 @@ const RoomLobby: NextPageWithLayout<RoomLobbyProps> = ({ user }) => {
 	};
 
 	const onBackIconClick = async () => {
-		await fetch(`/api/room/${router.query.roomCode}/player/${user.id}`, {
+		await fetch(`/api/room/${router.query.roomCode}/player/${id}`, {
 			method: 'DELETE',
 		});
 		router.replace('/profile');
@@ -189,10 +184,6 @@ const RoomLobby: NextPageWithLayout<RoomLobbyProps> = ({ user }) => {
 			)}
 		</div>
 	);
-};
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-	return getSessionUser(context);
 };
 
 export default RoomLobby;

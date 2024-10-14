@@ -5,20 +5,15 @@ import Logo from '@/components/logo/logo';
 import { useRouter } from 'next/router';
 import { useContext, useState } from 'react';
 import PlayerContext from '@/store/player-context';
-import { GetServerSideProps } from 'next';
-import { getSessionUser } from '@/utils/auth/server-auth';
-import { User } from '@/types/user-types';
+import { useUserSession } from '@/hooks/useUserSession';
 
-interface JoinRoomProps {
-	user: User;
-}
-
-const JoinRoom: React.FC<JoinRoomProps> = ({ user }) => {
+const JoinRoom: React.FC = () => {
 	const [roomCode, setRoomCode] = useState('');
 	const [errorMessage, setErrorMessage] = useState('');
 	const router = useRouter();
 	const { setIsAdmin } = useContext(PlayerContext);
 	const [isLoading, setIsLoading] = useState(false);
+	const { name, email, id } = useUserSession();
 
 	const handleClick = async () => {
 		setIsLoading(true);
@@ -26,8 +21,8 @@ const JoinRoom: React.FC<JoinRoomProps> = ({ user }) => {
 			method: 'POST',
 			body: JSON.stringify({
 				user: {
-					name: user.name || user.email,
-					id: user.id,
+					name: name || email,
+					id: id,
 					isReady: false,
 					status: 'pending',
 				},
@@ -70,10 +65,6 @@ const JoinRoom: React.FC<JoinRoomProps> = ({ user }) => {
 			</div>
 		</>
 	);
-};
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-	return getSessionUser(context);
 };
 
 export default JoinRoom;

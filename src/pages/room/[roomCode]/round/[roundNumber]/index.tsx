@@ -2,28 +2,27 @@ import Logo from '@/components/logo/logo';
 import QuestionPage, {
 	QuestionPageProps,
 } from '@/components/question-page/question-page';
+import { useUserSession } from '@/hooks/useUserSession';
 import PlayerContext from '@/store/player-context';
 import { PlayerAnswer } from '@/types/round-types';
-import { User } from '@/types/user-types';
 import { getRoundData, pushPlayerAnswer } from '@/utils/api/rounds';
-import { getSessionUser } from '@/utils/auth/server-auth';
 import { db } from '@/utils/db/firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { useContext, useEffect, useState } from 'react';
 
-const RoundPage: React.FC<QuestionPageProps & { user: User }> = ({
+const RoundPage: React.FC<QuestionPageProps> = ({
 	question,
 	answers,
 	questionAboutPlayer,
 	playersAnswers,
-	user,
 }) => {
 	const router = useRouter();
 	const [isRoundNumberShow, setIsRoundNumberShow] = useState(true);
 	const { roundNumber, roomCode } = router.query;
 	const { isEliminated } = useContext(PlayerContext);
+	const { id } = useUserSession();
 
 	useEffect(() => {
 		const timer = setTimeout(() => {
@@ -40,11 +39,11 @@ const RoundPage: React.FC<QuestionPageProps & { user: User }> = ({
 				roundNumber: roundNumber as string,
 				playerData: {
 					isEliminated,
-					id: user.id,
+					id: id,
 				},
 			});
 		}
-	}, [isEliminated, questionAboutPlayer.id, roomCode, roundNumber, user.id]);
+	}, [isEliminated, questionAboutPlayer.id, roomCode, roundNumber, id]);
 
 	useEffect(() => {
 		const roundCollection = doc(
@@ -73,7 +72,7 @@ const RoundPage: React.FC<QuestionPageProps & { user: User }> = ({
 		});
 
 		return () => unsubscribe();
-	}, [isEliminated, roomCode, roundNumber, router, user.id]);
+	}, [isEliminated, roomCode, roundNumber, router, id]);
 
 	return (
 		<>
@@ -91,7 +90,6 @@ const RoundPage: React.FC<QuestionPageProps & { user: User }> = ({
 					answers={answers}
 					questionAboutPlayer={questionAboutPlayer}
 					playersAnswers={playersAnswers}
-					user={user}
 				/>
 			)}
 		</>
@@ -101,12 +99,6 @@ const RoundPage: React.FC<QuestionPageProps & { user: User }> = ({
 export default RoundPage;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-	const session = await getSessionUser(context);
-
-	if (session.redirect) {
-		return session;
-	}
-
 	const { roundNumber, roomCode } = context.params!;
 
 	const roundData = await getRoundData(
@@ -118,7 +110,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 	return {
 		props: {
-			user: session.props.user,
 			question,
 			answers,
 			questionAboutPlayer,

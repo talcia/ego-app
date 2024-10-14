@@ -2,23 +2,18 @@ import Button from '@/components/button/button';
 import PlayerAvatar from '@/components/question-page/player-avatar';
 import AnswerWithBadgeList from '@/components/summarize-page/answer-with-badge-list';
 import PointsResult from '@/components/summarize-page/points-results';
+import { useUserSession } from '@/hooks/useUserSession';
 
 import PlayerContext from '@/store/player-context';
 import RoundContext from '@/store/round-context';
 import { PlayerAnswer, RoundData } from '@/types/round-types';
 import { User } from '@/types/user-types';
-import { getSessionUser } from '@/utils/auth/server-auth';
 import { db } from '@/utils/db/firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
-import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { useContext, useEffect, useState } from 'react';
 
-interface RoundSummarizePageProps {
-	user: User;
-}
-
-const RoundSummarizePage: React.FC<RoundSummarizePageProps> = ({ user }) => {
+const RoundSummarizePage: React.FC = () => {
 	const { numberOfRounds } = useContext(RoundContext);
 	const { points } = useContext(PlayerContext);
 	const router = useRouter();
@@ -31,6 +26,7 @@ const RoundSummarizePage: React.FC<RoundSummarizePageProps> = ({ user }) => {
 		coin: number;
 	}>();
 	const [isUserReady, setIsUserReady] = useState(false);
+	const { id } = useUserSession();
 
 	useEffect(() => {
 		if (!roomCode || Array.isArray(roomCode)) {
@@ -55,7 +51,7 @@ const RoundSummarizePage: React.FC<RoundSummarizePageProps> = ({ user }) => {
 
 	useEffect(() => {
 		if (points === 0) {
-			fetch(`/api/room/${roomCode}/player/${user.id}`, {
+			fetch(`/api/room/${roomCode}/player/${id}`, {
 				method: 'PATCH',
 				body: JSON.stringify({
 					key: 'points',
@@ -71,7 +67,7 @@ const RoundSummarizePage: React.FC<RoundSummarizePageProps> = ({ user }) => {
 	useEffect(() => {
 		if (roundData) {
 			const player = roundData?.playersAnswers.find(
-				(player: PlayerAnswer) => player.id === user.id
+				(player: PlayerAnswer) => player.id === id
 			);
 			if (player?.answer) {
 				setUserAnswer({
@@ -80,20 +76,17 @@ const RoundSummarizePage: React.FC<RoundSummarizePageProps> = ({ user }) => {
 				});
 			}
 		}
-	}, [roundData, user.id]);
+	}, [roundData, id]);
 
 	useEffect(() => {
 		const finishGame = async () => {
-			const response = await fetch(
-				`/api/room/${roomCode}/player/${user.id}`,
-				{
-					method: 'PATCH',
-					body: JSON.stringify({ key: 'points', value: points }),
-					headers: {
-						'Content-Type': 'application/json',
-					},
-				}
-			);
+			const response = await fetch(`/api/room/${roomCode}/player/${id}`, {
+				method: 'PATCH',
+				body: JSON.stringify({ key: 'points', value: points }),
+				headers: {
+					'Content-Type': 'application/json',
+				},
+			});
 			if (response.status === 201) {
 				router.replace(`/room/${roomCode}/round/finish`);
 			}
@@ -115,15 +108,7 @@ const RoundSummarizePage: React.FC<RoundSummarizePageProps> = ({ user }) => {
 				`/room/${roomCode}/round/${Number(roundNumber) + 1}`
 			);
 		}
-	}, [
-		numberOfRounds,
-		points,
-		roomCode,
-		roundData,
-		roundNumber,
-		router,
-		user.id,
-	]);
+	}, [numberOfRounds, points, roomCode, roundData, roundNumber, router, id]);
 
 	if (!roundData) {
 		return;
@@ -134,7 +119,7 @@ const RoundSummarizePage: React.FC<RoundSummarizePageProps> = ({ user }) => {
 			method: 'POST',
 			body: JSON.stringify({
 				playerData: {
-					id: user.id,
+					id: id,
 					isReadyForNextRound: !isUserReady,
 					...(points === 0 && { isEliminated: true }),
 				},
@@ -172,11 +157,10 @@ const RoundSummarizePage: React.FC<RoundSummarizePageProps> = ({ user }) => {
 					)}
 				/>
 			</div>
-			{roundData?.questionAboutPlayer.id !== user.id && userAnswer && (
+			{roundData?.questionAboutPlayer.id !== id && userAnswer && (
 				<PointsResult
 					correctAnswer={roundData.correctAnswer!}
 					userAnswer={userAnswer}
-					user={user}
 				/>
 			)}
 			<div>
@@ -189,10 +173,6 @@ const RoundSummarizePage: React.FC<RoundSummarizePageProps> = ({ user }) => {
 			</div>
 		</div>
 	);
-};
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-	return getSessionUser(context);
 };
 
 export default RoundSummarizePage;

@@ -2,7 +2,6 @@ import Button from '@/components/button/button';
 import PlayersResults from '@/components/players-list/players-results';
 import { PlayerInLobby } from '@/types/room-types';
 import { getPlayers } from '@/utils/api/players';
-import { getSessionUser } from '@/utils/auth/server-auth';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
@@ -48,12 +47,6 @@ const FinishPage: React.FC<FinishPageProps> = ({ players }) => {
 export default FinishPage;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-	const session = await getSessionUser(context);
-
-	if (session.redirect) {
-		return session;
-	}
-
 	const { roomCode } = context.params!;
 
 	const players = await getPlayers(roomCode as string);

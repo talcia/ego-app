@@ -3,28 +3,20 @@ import Link from 'next/link';
 import PlayerAvatar from '@/components/question-page/player-avatar';
 import ProfileLayout from './layout';
 import { NextPageWithLayout } from '../_app';
-import { useSession } from 'next-auth/react';
+import { useUserSession } from '@/hooks/useUserSession';
 
 const Profile: NextPageWithLayout = () => {
-	const { data } = useSession();
-
-	if (!data?.user) {
-		return;
-	}
-
-	const { user } = data;
+	const { id, name, email } = useUserSession();
 
 	return (
 		<div className="flex flex-col ">
 			<div className="my-3">
-				<PlayerAvatar name="" size={150} playerId={user.id!} />
+				<PlayerAvatar name="" size={150} playerId={id} />
 			</div>
 			<div className="flex justify-center items-center my-5">
-				<p className="text-customWhite text-center ">
-					{user.name || user.email}
-				</p>
+				<p className="text-customWhite text-center ">{name || email}</p>
 			</div>
-			{user.email && (
+			{email && (
 				<Link href="/room/create">
 					<Button>Create room</Button>
 				</Link>
