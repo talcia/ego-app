@@ -1,7 +1,7 @@
 import PlayerAvatar from '@/components/question-page/player-avatar';
 import { EliminatedPlayer } from '@/types/round-types';
 import { getPlayerData, getPlayers } from '@/utils/api/players';
-import { getRoomData } from '@/utils/api/rooms';
+import { canUserAccessRoom, getRoomData } from '@/utils/api/rooms';
 import { getRoundData } from '@/utils/api/rounds';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
@@ -58,12 +58,16 @@ export default PlayerEliminatedPage;
 export const getServerSideProps: GetServerSideProps = async (context) => {
 	const { roundNumber, roomCode } = context.params!;
 
+	const roomData = await getRoomData(roomCode as string);
+
 	const roundData = await getRoundData(
 		roomCode as string,
 		roundNumber as string
 	);
 
-	if (!roundData) {
+	const canAccess = await canUserAccessRoom(roomCode as string, context.req);
+
+	if (!canAccess || !roomData || !roundData) {
 		return { notFound: true };
 	}
 
@@ -73,14 +77,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 		const { id, name } =
 			(await getPlayerData(roomCode as string, player)) || {};
 		eliminatedPlayersArray.push({ id, name });
-	}
-
-	const roomData = await getRoomData(roomCode as string);
-
-	if (!roomData) {
-		return {
-			notFound: true,
-		};
 	}
 
 	const players = await getPlayers(roomCode as string);

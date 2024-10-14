@@ -11,7 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import Input from '@/components/input/input';
 import { GetServerSideProps } from 'next';
-import { getRoomData } from '@/utils/api/rooms';
+import { canUserAccessRoom, getRoomData } from '@/utils/api/rooms';
 import { getSession } from 'next-auth/react';
 
 const RoomSettings: NextPageWithLayout<{
@@ -95,10 +95,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 	const roomData = await getRoomData(roomCode as string);
 
-	if (!roomData) {
-		return {
-			notFound: true,
-		};
+	const canAccess = await canUserAccessRoom(roomCode as string, context.req);
+
+	if (!canAccess || !roomData) {
+		return { notFound: true };
 	}
 
 	const { initialPoints, numberOfRounds, owner } = roomData || {};

@@ -7,6 +7,7 @@ import { useUserSession } from '@/hooks/useUserSession';
 import PlayerContext from '@/store/player-context';
 import RoundContext from '@/store/round-context';
 import { PlayerAnswer, RoundData } from '@/types/round-types';
+import { canUserAccessRoom } from '@/utils/api/rooms';
 import { getRoundData } from '@/utils/api/rounds';
 import { db } from '@/utils/db/firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
@@ -184,7 +185,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 		roundNumber as string
 	);
 
-	if (!roundData) {
+	const canAccess = await canUserAccessRoom(roomCode as string, context.req);
+
+	if (!canAccess || !roundData) {
 		return { notFound: true };
 	}
 

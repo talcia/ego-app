@@ -1,7 +1,7 @@
 import Logo from '@/components/logo/logo';
 import PlayersList from '@/components/players-list/players-list';
 import { PlayerInLobby } from '@/types/room-types';
-import { getRoomData } from '@/utils/api/rooms';
+import { canUserAccessRoom } from '@/utils/api/rooms';
 import { db } from '@/utils/db/firebase';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -92,9 +92,9 @@ const WaitingList: React.FC = () => {
 export const getServerSideProps: GetServerSideProps = async (context) => {
 	const { roomCode } = context.params!;
 
-	const roomData = await getRoomData(roomCode as string);
+	const canAccess = await canUserAccessRoom(roomCode as string, context.req);
 
-	if (!roomData) {
+	if (!canAccess) {
 		return { notFound: true };
 	}
 

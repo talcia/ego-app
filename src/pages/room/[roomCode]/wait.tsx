@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 import { PlayerInLobby } from '@/types/room-types';
 import { useUserSession } from '@/hooks/useUserSession';
 import { GetServerSideProps } from 'next';
-import { getRoomData } from '@/utils/api/rooms';
+import { canUserAccessRoom, getRoomData } from '@/utils/api/rooms';
 
 const WaitPage: React.FC = () => {
 	const router = useRouter();
@@ -75,7 +75,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 	const roomData = await getRoomData(roomCode as string);
 
-	if (!roomData) {
+	const canAccess = await canUserAccessRoom(roomCode as string, context.req);
+
+	if (!canAccess || !roomData) {
 		return { notFound: true };
 	}
 

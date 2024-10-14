@@ -12,7 +12,7 @@ const RoomNotExist = () => {
 			>
 				404
 			</p>
-			<p>{`This room code doesn't match any existing room`}</p>
+			<p>{`This page could not be found`}</p>
 		</div>
 	);
 };

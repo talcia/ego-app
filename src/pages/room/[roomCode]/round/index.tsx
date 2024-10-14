@@ -1,5 +1,5 @@
 import Logo from '@/components/logo/logo';
-import { getRoomData } from '@/utils/api/rooms';
+import { canUserAccessRoom, getRoomData } from '@/utils/api/rooms';
 import { db } from '@/utils/db/firebase';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { GetServerSideProps } from 'next';
@@ -43,7 +43,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 	const roomData = await getRoomData(roomCode as string);
 
-	if (!roomData) {
+	const canAccess = await canUserAccessRoom(roomCode as string, context.req);
+
+	if (!canAccess || !roomData) {
 		return { notFound: true };
 	}
 

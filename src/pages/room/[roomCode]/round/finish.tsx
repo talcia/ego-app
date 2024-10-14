@@ -2,7 +2,7 @@ import Button from '@/components/button/button';
 import PlayersResults from '@/components/players-list/players-results';
 import { PlayerInLobby } from '@/types/room-types';
 import { getPlayers } from '@/utils/api/players';
-import { getRoomData } from '@/utils/api/rooms';
+import { canUserAccessRoom, getRoomData } from '@/utils/api/rooms';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
@@ -52,7 +52,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 	const roomData = await getRoomData(roomCode as string);
 
-	if (!roomData) {
+	const canAccess = await canUserAccessRoom(roomCode as string, context.req);
+
+	if (!canAccess || !roomData) {
 		return { notFound: true };
 	}
 

@@ -13,7 +13,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faGear } from '@fortawesome/free-solid-svg-icons';
 import { PlayerInLobby } from '@/types/room-types';
 import { useUserSession } from '@/hooks/useUserSession';
-import { getRoomData } from '@/utils/api/rooms';
+import { canUserAccessRoom, getRoomData } from '@/utils/api/rooms';
 import { GetServerSideProps } from 'next';
 
 const RoomLobby: NextPageWithLayout = () => {
@@ -192,8 +192,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 	const { roomCode } = context.params!;
 
 	const roomData = await getRoomData(roomCode as string);
+	const canAccess = await canUserAccessRoom(roomCode as string, context.req);
 
-	if (!roomData) {
+	if (!roomData || !canAccess) {
 		return { notFound: true };
 	}
 
