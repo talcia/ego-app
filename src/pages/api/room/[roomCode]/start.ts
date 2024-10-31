@@ -42,7 +42,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
 			let playerIndex = 0;
 			for (let i = 1; i <= numberOfRounds; i++) {
-				const { question, answers } = shuffledQuestionsArray[i];
+				const { question, answers } = shuffledQuestionsArray[i] || {};
 				if (playerIndex === players.length) {
 					playerIndex = 0;
 				}

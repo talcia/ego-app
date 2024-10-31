@@ -27,7 +27,6 @@ const PlayerAvatar: React.FC<PlayerAvatar> = ({
 				const fileURL = await getDownloadURL(fileRef);
 				setPhotoURL(fileURL);
 			} catch (e) {
-				console.log(e);
 				const fileRef = ref(storage, `images/unknown.png`);
 				const fileURL = await getDownloadURL(fileRef);
 				setPhotoURL(fileURL);

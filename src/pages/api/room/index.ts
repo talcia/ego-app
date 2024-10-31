@@ -8,7 +8,6 @@ import { PlayerInLobby } from '@/types/room-types';
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 	if (req.method === 'POST') {
 		const session = await getServerSession(req, res, authOptions);
-
 		if (!session) {
 			res.status(401).json({ message: 'Not autheticated' });
 			return;

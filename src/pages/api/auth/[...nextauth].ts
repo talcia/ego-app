@@ -1,6 +1,6 @@
 import { auth } from '@/utils/db/firebase';
 import { signInAnonymously, signInWithEmailAndPassword } from 'firebase/auth';
-import NextAuth, { NextAuthOptions, Session, User } from 'next-auth';
+import NextAuth, { NextAuthOptions, Session } from 'next-auth';
 import { JWT } from 'next-auth/jwt';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
